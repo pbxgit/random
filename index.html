@@ -7,7 +7,7 @@
   
   <!-- PWA additions -->
   <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#ffffff"/>
+  <meta name="theme-color" content="#1f2937"/> <!-- Dark theme color for PWA bar -->
   <link rel="apple-touch-icon" href="/icon-192x192.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,36 +16,49 @@
   <style>
     /* CSS Variables for Theming */
     :root {
-      --bg-color: #f4f7f9;
-      --card-bg-color: #ffffff;
-      --text-color: #111827;
-      --muted-text-color: #6b7280;
-      --border-color: #e5e7eb;
+      --bg-color-light: #f4f7f9;
+      --card-bg-light: rgba(255, 255, 255, 0.7);
+      --text-color-light: #111827;
+      --muted-text-light: #6b7280;
+      --border-color-light: rgba(229, 231, 235, 0.8);
+
+      --bg-color-dark: #111827;
+      --card-bg-dark: rgba(31, 41, 55, 0.7);
+      --text-color-dark: #f9fafb;
+      --muted-text-dark: #9ca3af;
+      --border-color-dark: rgba(55, 65, 81, 0.8);
+
       --accent-color: #3b82f6;
       --accent-color-hover: #2563eb;
-      --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-      --die-bg: #fff;
-      --die-pip: #111827;
-      --die-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      --btn-hover-shadow: 0 4px 12px -1px color-mix(in srgb, var(--accent-color) 30%, transparent);
+      --accent-glow: 0 0 20px 0 color-mix(in srgb, var(--accent-color) 30%, transparent);
+
       --strength-weak: #ef4444;
       --strength-medium: #f97316;
       --strength-strong: #22c55e;
+      
+      /* Default to light theme */
+      --bg-color: var(--bg-color-light);
+      --card-bg-color: var(--card-bg-light);
+      --text-color: var(--text-color-light);
+      --muted-text-color: var(--muted-text-light);
+      --border-color: var(--border-color-light);
+      --die-bg: #fff;
+      --die-pip: #111827;
+      --die-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
     @media (prefers-color-scheme: dark) {
       :root {
-        --bg-color: #111827;
-        --card-bg-color: #1f2937;
-        --text-color: #f9fafb;
-        --muted-text-color: #9ca3af;
-        --border-color: #374151;
+        --bg-color: var(--bg-color-dark);
+        --card-bg-color: var(--card-bg-dark);
+        --text-color: var(--text-color-dark);
+        --muted-text-color: var(--muted-text-dark);
+        --border-color: var(--border-color-dark);
         --accent-color: #60a5fa;
         --accent-color-hover: #3b82f6;
         --die-bg: #2d3748;
         --die-pip: #f9fafb;
         --die-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        --btn-hover-shadow: 0 4px 12px -1px color-mix(in srgb, var(--accent-color) 20%, transparent);
       }
     }
 
@@ -58,43 +71,72 @@
       color: var(--text-color);
       display: flex;
       justify-content: center;
-      align-items: flex-start;
+      align-items: center; /* Center vertically */
       min-height: 100vh;
       padding: 40px 20px;
       transition: background-color 0.3s, color 0.3s;
+      background-image: linear-gradient(135deg, var(--accent-color) 0%, var(--bg-color) 30%);
     }
 
     /* Page Load Animation */
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Main App Container */
+    /* Main App Container with Glassmorphism */
     .app-container {
       width: 100%;
       max-width: 500px;
       background-color: var(--card-bg-color);
-      border-radius: 16px;
-      box-shadow: var(--card-shadow);
+      border-radius: 20px; /* More rounded */
+      border: 1px solid var(--border-color);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       overflow: hidden;
       display: flex;
       flex-direction: column;
       animation: fadeInUp 0.6s ease-out;
     }
 
-    header { padding: 24px; border-bottom: 1px solid var(--border-color); text-align: center; }
-    header h1 { font-size: 1.5rem; margin: 0; }
-    header p { font-size: 0.9rem; color: var(--muted-text-color); margin: 4px 0 0; }
+    header { 
+      padding: 24px;
+      border-bottom: 1px solid var(--border-color);
+      text-align: center;
+      display: flex; /* New */
+      align-items: center; /* New */
+      justify-content: center; /* New */
+      gap: 12px; /* New */
+    }
+    header h1 { font-size: 1.75rem; margin: 0; }
+    header p { font-size: 0.9rem; color: var(--muted-text-color); margin: 0; position: relative; top: 2px;}
 
     main { padding: 24px; display: flex; flex-direction: column; gap: 20px; }
 
     /* Tab Navigation */
-    .tabs { display: flex; flex-wrap: wrap; justify-content: space-around; border-bottom: 1px solid var(--border-color); }
+    .tabs { 
+      display: flex; 
+      flex-wrap: wrap; 
+      justify-content: space-around; 
+      border-bottom: 1px solid var(--border-color);
+      position: relative; /* For the animated underline */
+    }
     .tab-button {
-      flex: 1; padding: 16px 8px; background: none; border: none; border-bottom: 3px solid transparent;
+      flex: 1; padding: 16px 8px; background: none; border: none;
       color: var(--muted-text-color); font-size: 0.9rem; font-weight: 500;
-      cursor: pointer; transition: color 0.2s, border-color 0.2s; white-space: nowrap;
+      cursor: pointer; transition: color 0.2s; white-space: nowrap;
+      position: relative;
+      z-index: 1;
     }
     .tab-button:hover { color: var(--accent-color); }
-    .tab-button.active { color: var(--text-color); border-bottom-color: var(--accent-color); }
+    .tab-button.active { color: var(--text-color); }
+    
+    .tab-underline {
+      position: absolute;
+      bottom: -1px; /* Sit on top of the border */
+      height: 3px;
+      background-color: var(--accent-color);
+      border-radius: 2px;
+      transition: left 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
     
     .tab-content { display: none; }
     .tab-content.active { display: block; animation: fadeIn 0.4s ease-out; }
@@ -110,14 +152,15 @@
     .compact-inputs .form-group { flex: 1; margin-bottom: 0; }
     @media (max-width: 480px) { .compact-inputs { flex-direction: column; gap: 16px; } }
     
-    input[type="number"], input[type="text"], textarea {
+    input, textarea {
       display: block; width: 100%; padding: 12px; border-radius: 8px;
-      border: 1px solid var(--border-color); background-color: var(--bg-color);
+      border: 1px solid var(--border-color);
+      background-color: color-mix(in srgb, var(--card-bg-color) 50%, transparent); /* Semi-transparent inputs */
       color: var(--text-color); font-size: 1rem;
       transition: border-color 0.2s, box-shadow 0.2s; font-family: 'Inter', sans-serif;
     }
     textarea { min-height: 120px; resize: vertical; }
-    input[type="number"]:focus, input[type="text"]:focus, textarea:focus {
+    input:focus, textarea:focus {
       outline: none; border-color: var(--accent-color);
       box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 20%, transparent);
     }
@@ -127,13 +170,17 @@
       padding: 14px; border-radius: 8px; font-size: 1rem; font-weight: 500;
       cursor: pointer; transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
     }
-    .primary-button:hover { background: var(--accent-color-hover); box-shadow: var(--btn-hover-shadow); }
-    .primary-button:active { transform: scale(0.98); }
-    .primary-button:disabled { background-color: var(--muted-text-color); cursor: not-allowed; box-shadow: none; }
+    .primary-button:hover { 
+      transform: translateY(-2px);
+      box-shadow: var(--accent-glow);
+    }
+    .primary-button:active { transform: scale(0.98) translateY(0); }
+    .primary-button:disabled { background-color: var(--muted-text-color); cursor: not-allowed; box-shadow: none; transform: none; }
 
     /* Result Display */
     .result-container {
-      background-color: var(--bg-color); border-radius: 8px; padding: 20px;
+      background-color: color-mix(in srgb, var(--bg-color) 80%, var(--card-bg-color));
+      border-radius: 8px; padding: 20px;
       min-height: 100px; display: flex; justify-content: center; align-items: center;
       text-align: center; word-break: break-all; position: relative;
     }
@@ -222,17 +269,18 @@
 
   <div class="app-container">
     <header>
-      <h1>🎲 True Random Toolkit</h1>
-      <p>Powered by RANDOM.ORG</p>
+      <h1>🎲</h1>
+      <p><strong>True Random Toolkit</strong><br><span style="font-size: 0.8rem; color: var(--muted-text-color);">Powered by RANDOM.ORG</span></p>
     </header>
     
     <nav class="tabs">
-      <button class="tab-button active" onclick="showTab('integers')">Integers</button>
-      <button class="tab-button" onclick="showTab('password')">Password</button>
-      <button class="tab-button" onclick="showTab('coin')">Coin Flip</button>
-      <button class="tab-button" onclick="showTab('dice')">Dice Roller</button>
-      <button class="tab-button" onclick="showTab('list')">List Picker</button>
-      <button class="tab-button" onclick="showTab('shuffle')">List Shuffler</button>
+      <button class="tab-button active" onclick="showTab('integers', this)">Integers</button>
+      <button class="tab-button" onclick="showTab('password', this)">Password</button>
+      <button class="tab-button" onclick="showTab('coin', this)">Coin Flip</button>
+      <button class="tab-button" onclick="showTab('dice', this)">Dice Roller</button>
+      <button class="tab-button" onclick="showTab('list', this)">List Picker</button>
+      <button class="tab-button" onclick="showTab('shuffle', this)">List Shuffler</button>
+      <div class="tab-underline"></div>
     </nav>
 
     <main>
@@ -349,6 +397,15 @@
 
     // --- SETUP & EVENT LISTENERS ---
     document.addEventListener('DOMContentLoaded', () => {
+        // Tab Underline Logic
+        const tabContainer = document.querySelector('.tabs');
+        const tabUnderline = document.querySelector('.tab-underline');
+        const firstActiveTab = document.querySelector('.tab-button.active');
+        if (firstActiveTab) {
+            tabUnderline.style.width = `${firstActiveTab.offsetWidth}px`;
+            tabUnderline.style.left = `${firstActiveTab.offsetLeft}px`;
+        }
+        
         // Integer validation
         const minInput = document.getElementById('min');
         const maxInput = document.getElementById('max');
@@ -390,11 +447,16 @@
     });
     
     // --- UI LOGIC ---
-    function showTab(tabName) {
+    function showTab(tabName, clickedButton) {
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
       document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
       document.getElementById(tabName).classList.add('active');
-      document.querySelector(`.tab-button[onclick="showTab('${tabName}')"]`).classList.add('active');
+      clickedButton.classList.add('active');
+      
+      // Move Underline
+      const tabUnderline = document.querySelector('.tab-underline');
+      tabUnderline.style.width = `${clickedButton.offsetWidth}px`;
+      tabUnderline.style.left = `${clickedButton.offsetLeft}px`;
     }
 
     function setLoading(button, resultEl, isLoading, originalText) {
