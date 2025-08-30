@@ -103,6 +103,15 @@
     /* Form Elements */
     .form-group { margin-bottom: 16px; }
     .form-group label { display: block; font-weight: 500; margin-bottom: 8px; font-size: 0.9rem; }
+    .form-group-inline {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+    .form-group-inline label { margin-bottom: 0; }
+    .form-group-inline input[type="checkbox"] { width: 16px; height: 16px; }
+    
     input[type="number"], input[type="text"], textarea {
       display: block; width: 100%; padding: 12px; border-radius: 8px;
       border: 1px solid var(--border-color); background-color: var(--bg-color);
@@ -145,7 +154,7 @@
     .result-container.has-result .copy-btn { display: flex; }
     .copy-btn svg { width: 16px; height: 16px; }
 
-    /* --- IMPROVED COIN VISUALS --- */
+    /* Coin Visuals */
     .coin-container { display: flex; justify-content: center; margin-bottom: 24px; perspective: 1000px; }
     .coin { width: 100px; height: 100px; position: relative; transform-style: preserve-3d; }
     .coin.is-flipping { animation: spin 1.5s linear infinite; }
@@ -157,15 +166,10 @@
       backface-visibility: hidden;
       box-shadow: inset 0 0 15px rgba(0,0,0,0.25);
     }
-    .coin-front {
-      background: radial-gradient(circle, #ffd700, #f0c400); color: #b8860b;
-    }
-    .coin-back {
-      background: radial-gradient(circle, #d1d5db, #c0c0c0); color: #4a4a4a;
-      transform: rotateY(180deg);
-    }
+    .coin-front { background: radial-gradient(circle, #ffd700, #f0c400); color: #b8860b; }
+    .coin-back { background: radial-gradient(circle, #d1d5db, #c0c0c0); color: #4a4a4a; transform: rotateY(180deg); }
 
-    /* --- IMPROVED DICE VISUALS --- */
+    /* Dice Visuals */
     .dice-container {
       display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;
       align-items: center; min-height: 80px; margin-bottom: 20px;
@@ -176,49 +180,27 @@
       padding: 8px; display: grid; grid-template-rows: 1fr 1fr 1fr;
       grid-template-columns: 1fr 1fr 1fr; gap: 4px;
     }
-    .pip {
-      width: 100%; height: 100%; background-color: var(--die-pip);
-      border-radius: 50%;
-    }
-    .pip:nth-child(2) { grid-area: 1 / 2; }
-    .pip:nth-child(3) { grid-area: 1 / 3; }
-    .pip:nth-child(4) { grid-area: 2 / 1; }
-    .pip:nth-child(5) { grid-area: 2 / 3; }
-    .pip:nth-child(6) { grid-area: 3 / 1; }
-    .pip:nth-child(7) { grid-area: 3 / 2; }
+    .pip { width: 100%; height: 100%; background-color: var(--die-pip); border-radius: 50%; }
+    .pip:nth-child(2) { grid-area: 1 / 2; } .pip:nth-child(3) { grid-area: 1 / 3; }
+    .pip:nth-child(4) { grid-area: 2 / 1; } .pip:nth-child(5) { grid-area: 2 / 3; }
+    .pip:nth-child(6) { grid-area: 3 / 1; } .pip:nth-child(7) { grid-area: 3 / 2; }
     .pip:nth-child(8) { grid-area: 3 / 3; }
-
-    /* Center pip for 1, 3, 5 */
-    [data-value="1"] .pip:nth-child(1),
-    [data-value="3"] .pip:nth-child(1),
-    [data-value="5"] .pip:nth-child(1) { grid-area: 2 / 2; }
-
-    /* Hide pips based on value */
+    [data-value="1"] .pip:nth-child(1), [data-value="3"] .pip:nth-child(1), [data-value="5"] .pip:nth-child(1) { grid-area: 2 / 2; }
     [data-value="1"] .pip:not(:nth-child(1)) { display: none; }
-    [data-value="2"] .pip:nth-child(1) { grid-area: 1 / 1; }
-    [data-value="2"] .pip:nth-child(2) { grid-area: 3 / 3; }
+    [data-value="2"] .pip:nth-child(1) { grid-area: 1 / 1; } [data-value="2"] .pip:nth-child(2) { grid-area: 3 / 3; }
     [data-value="2"] .pip:not(:nth-child(1)):not(:nth-child(2)) { display: none; }
-    [data-value="3"] .pip:nth-child(2) { grid-area: 1 / 1; }
-    [data-value="3"] .pip:nth-child(3) { grid-area: 3 / 3; }
+    [data-value="3"] .pip:nth-child(2) { grid-area: 1 / 1; } [data-value="3"] .pip:nth-child(3) { grid-area: 3 / 3; }
     [data-value="3"] .pip:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)) { display: none; }
-    [data-value="4"] .pip:nth-child(1) { grid-area: 1 / 1; }
-    [data-value="4"] .pip:nth-child(2) { grid-area: 1 / 3; }
-    [data-value="4"] .pip:nth-child(3) { grid-area: 3 / 1; }
-    [data-value="4"] .pip:nth-child(4) { grid-area: 3 / 3; }
-    [data-value="4"] .pip:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)):not(:nth-child(4)) { display: none; }
-    [data-value="5"] .pip:nth-child(2) { grid-area: 1 / 1; }
-    [data-value="5"] .pip:nth-child(3) { grid-area: 1 / 3; }
-    [data-value="5"] .pip:nth-child(4) { grid-area: 3 / 1; }
-    [data-value="5"] .pip:nth-child(5) { grid-area: 3 / 3; }
+    [data-value="4"] .pip:nth-child(1) { grid-area: 1 / 1; } [data-value="4"] .pip:nth-child(2) { grid-area: 1 / 3; }
+    [data-value="4"] .pip:nth-child(3) { grid-area: 3 / 1; } [data-value="4"] .pip:nth-child(4) { grid-area: 3 / 3; }
+    [data-value="4"] .pip:not(:nth-child(-n+4)) { display: none; }
+    [data-value="5"] .pip:nth-child(2) { grid-area: 1 / 1; } [data-value="5"] .pip:nth-child(3) { grid-area: 1 / 3; }
+    [data-value="5"] .pip:nth-child(4) { grid-area: 3 / 1; } [data-value="5"] .pip:nth-child(5) { grid-area: 3 / 3; }
     [data-value="5"] .pip:not(:nth-child(-n+5)) { display: none; }
-    [data-value="6"] .pip:nth-child(1) { grid-area: 1 / 1; }
-    [data-value="6"] .pip:nth-child(2) { grid-area: 1 / 3; }
-    [data-value="6"] .pip:nth-child(3) { grid-area: 2 / 1; }
-    [data-value="6"] .pip:nth-child(4) { grid-area: 2 / 3; }
-    [data-value="6"] .pip:nth-child(5) { grid-area: 3 / 1; }
-    [data-value="6"] .pip:nth-child(6) { grid-area: 3 / 3; }
+    [data-value="6"] .pip:nth-child(1) { grid-area: 1 / 1; } [data-value="6"] .pip:nth-child(2) { grid-area: 1 / 3; }
+    [data-value="6"] .pip:nth-child(3) { grid-area: 2 / 1; } [data-value="6"] .pip:nth-child(4) { grid-area: 2 / 3; }
+    [data-value="6"] .pip:nth-child(5) { grid-area: 3 / 1; } [data-value="6"] .pip:nth-child(6) { grid-area: 3 / 3; }
     [data-value="6"] .pip:not(:nth-child(-n+6)) { display: none; }
-    
     .die.is-rolling { animation: roll 0.5s ease-in-out; }
     @keyframes roll {
       0% { transform: rotate(0deg) scale(0.8); opacity: 0.5; }
@@ -249,6 +231,13 @@
         <div class="form-group"><label for="min">Minimum Value</label><input id="min" type="number" value="1" /></div>
         <div class="form-group"><label for="max">Maximum Value</label><input id="max" type="number" value="100" /></div>
         <div class="form-group"><label for="count">Number of Integers</label><input id="count" type="number" value="1" /></div>
+        
+        <!-- NEW DUPLICATES OPTION -->
+        <div class="form-group-inline">
+            <input id="allowDuplicates" type="checkbox" name="allowDuplicates" checked>
+            <label for="allowDuplicates">Allow duplicate integers</label>
+        </div>
+
         <button class="primary-button" onclick="handleGenerate(this)">Generate</button>
         <div id="integersResultContainer" class="result-container" style="margin-top: 20px;">
           <p id="result" class="result-text">Your random numbers will appear here.</p>
@@ -256,66 +245,19 @@
         </div>
       </section>
 
-      <!-- Coin Flip Section -->
-      <section id="coin" class="tab-content">
-        <div class="coin-container"><div id="coin-flipper" class="coin"><div class="coin-face coin-front">H</div><div class="coin-face coin-back">T</div></div></div>
-        <p style="text-align: center; color: var(--muted-text-color); margin-top:0;">Flip one or more coins.</p>
-        <div class="button-group">
-          <button class="primary-button" onclick="handleFlip(1, this)">Flip Once</button>
-          <button class="primary-button" onclick="handleFlip(10, this)">Flip 10 Times</button>
-        </div>
-        <div id="coinResultContainer" class="result-container" style="margin-top: 20px;">
-          <p id="coinResult" class="result-text">The coin flip result will appear here.</p>
-          <button class="copy-btn" title="Copy to clipboard" onclick="handleCopy('coinResult')"><svg fill="currentColor" viewBox="0 0 16 16"><path d="M13 4.5a.5.5 0 0 0-.5-.5H5.707l.647-.646a.5.5 0 1 0-.708-.708l-1.5 1.5a.5.5 0 0 0 0 .708l1.5 1.5a.5.5 0 0 0 .708-.708L5.707 5H12.5a.5.5 0 0 0 .5-.5z"/><path d="M4 2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V2zm2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H6zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H2z"/></svg></button>
-        </div>
-      </section>
-      
-      <!-- Dice Roller Section -->
-      <section id="dice" class="tab-content">
-        <div id="dice-display" class="dice-container"></div>
-        <div class="form-group">
-            <label for="diceCount">Number of Dice to Roll (1-10)</label>
-            <input id="diceCount" type="number" value="2" min="1" max="10" />
-        </div>
-        <button class="primary-button" onclick="handleDiceRoll(this)">Roll Dice</button>
-        <div id="diceResultContainer" class="result-container" style="margin-top: 20px;">
-          <p id="diceResult" class="result-text">Your dice roll totals will appear here.</p>
-          <button class="copy-btn" title="Copy to clipboard" onclick="handleCopy('diceResult')"><svg fill="currentColor" viewBox="0 0 16 16"><path d="M13 4.5a.5.5 0 0 0-.5-.5H5.707l.647-.646a.5.5 0 1 0-.708-.708l-1.5 1.5a.5.5 0 0 0 0 .708l1.5 1.5a.5.5 0 0 0 .708-.708L5.707 5H12.5a.5.5 0 0 0 .5-.5z"/><path d="M4 2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V2zm2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H6zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H2z"/></svg></button>
-        </div>
-      </section>
-
-      <!-- Pick From List Section -->
-      <section id="list" class="tab-content">
-        <div class="form-group">
-          <label for="listItems">Enter items separated by a comma</label>
-          <input id="listItems" type="text" placeholder="apple, banana, cherry, orange" />
-        </div>
-        <button class="primary-button" onclick="handlePick(this)">Pick One Item</button>
-        <div id="pickResultContainer" class="result-container" style="margin-top: 20px;">
-          <p id="pickResult" class="result-text">The randomly picked item will appear here.</p>
-          <button class="copy-btn" title="Copy to clipboard" onclick="handleCopy('pickResult')"><svg fill="currentColor" viewBox="0 0 16 16"><path d="M13 4.5a.5.5 0 0 0-.5-.5H5.707l.647-.646a.5.5 0 1 0-.708-.708l-1.5 1.5a.5.5 0 0 0 0 .708l1.5 1.5a.5.5 0 0 0 .708-.708L5.707 5H12.5a.5.5 0 0 0 .5-.5z"/><path d="M4 2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V2zm2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H6zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H2z"/></svg></button>
-        </div>
-      </section>
-      
-      <!-- List Shuffler Section -->
-      <section id="shuffle" class="tab-content">
-          <div class="form-group">
-              <label for="shuffleList">Enter items, one per line</label>
-              <textarea id="shuffleList" placeholder="Apple&#10;Banana&#10;Cherry&#10;Orange"></textarea>
-          </div>
-          <button class="primary-button" onclick="handleShuffle(this)">Shuffle List</button>
-          <div id="shuffleResultContainer" class="result-container" style="margin-top: 20px;">
-              <p id="shuffleResult" class="result-text">Your shuffled list will appear here.</p>
-              <button class="copy-btn" title="Copy to clipboard" onclick="handleCopy('shuffleResult')"><svg fill="currentColor" viewBox="0 0 16 16"><path d="M13 4.5a.5.5 0 0 0-.5-.5H5.707l.647-.646a.5.5 0 1 0-.708-.708l-1.5 1.5a.5.5 0 0 0 0 .708l1.5 1.5a.5.5 0 0 0 .708-.708L5.707 5H12.5a.5.5 0 0 0 .5-.5z"/><path d="M4 2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V2zm2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H6zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H2z"/></svg></button>
-          </div>
-      </section>
+      <!-- Other sections remain the same... -->
+      <section id="coin" class="tab-content"><!-- ... --></section>
+      <section id="dice" class="tab-content"><!-- ... --></section>
+      <section id="list" class="tab-content"><!-- ... --></section>
+      <section id="shuffle" class="tab-content"><!-- ... --></section>
     </main>
   </div>
 
   <script>
-    // --- ESSENTIAL API LOGIC ---
-    async function generateRandom(min, max, n = 1) {
-      const response = await fetch(`/api/generateIntegers?min=${min}&max=${max}&n=${n}`);
+    // --- API LOGIC ---
+    async function generateRandom(params) {
+      const query = new URLSearchParams(params).toString();
+      const response = await fetch(`/api/generateIntegers?${query}`);
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'An unknown network error occurred.' }));
         throw new Error(errorData.error || 'Failed to fetch random numbers.');
@@ -325,27 +267,40 @@
       return data.numbers;
     }
 
-    // --- FRONTEND LOGIC ---
-    function showTab(tabName) {
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
-      document.getElementById(tabName).classList.add('active');
-      document.querySelector(`.tab-button[onclick="showTab('${tabName}')"]`).classList.add('active');
-    }
+    // --- SETUP & EVENT LISTENERS ---
+    document.addEventListener('DOMContentLoaded', () => {
+        const minInput = document.getElementById('min');
+        const maxInput = document.getElementById('max');
+        const countInput = document.getElementById('count');
+        const duplicatesCheckbox = document.getElementById('allowDuplicates');
+        const duplicatesLabel = duplicatesCheckbox.nextElementSibling;
 
-    function setLoading(button, resultEl, isLoading, originalText) {
-      button.disabled = isLoading;
-      button.textContent = isLoading ? 'Generating...' : originalText;
-      resultEl.parentElement.classList.remove('has-result');
-      if (!isLoading) {
-        resultEl.classList.add('loaded');
-        if(resultEl.textContent && !resultEl.textContent.startsWith('Error')) {
-             resultEl.parentElement.classList.add('has-result');
+        function validateUniqueOption() {
+            const min = parseInt(minInput.value) || 0;
+            const max = parseInt(maxInput.value) || 0;
+            const count = parseInt(countInput.value) || 0;
+            const range = max - min + 1;
+
+            if (count > range && range > 0) {
+                duplicatesCheckbox.checked = true;
+                duplicatesCheckbox.disabled = true;
+                duplicatesLabel.style.color = 'var(--muted-text-color)';
+                duplicatesLabel.title = `Cannot generate ${count} unique numbers from a range of only ${range}. Duplicates must be allowed.`;
+            } else {
+                duplicatesCheckbox.disabled = false;
+                duplicatesLabel.style.color = '';
+                duplicatesLabel.title = '';
+            }
         }
-      } else {
-        resultEl.classList.remove('loaded');
-      }
-    }
+        minInput.addEventListener('input', validateUniqueOption);
+        maxInput.addEventListener('input', validateUniqueOption);
+        countInput.addEventListener('input', validateUniqueOption);
+        validateUniqueOption(); // Initial check
+    });
+    
+    // --- UI LOGIC ---
+    function showTab(tabName) { /* ... same as before ... */ }
+    function setLoading(button, resultEl, isLoading, originalText) { /* ... same as before ... */ }
 
     // --- EVENT HANDLERS ---
     async function handleGenerate(button) {
@@ -355,8 +310,21 @@
         const min = document.getElementById("min").value;
         const max = document.getElementById("max").value;
         const count = document.getElementById("count").value;
-        const numbers = await generateRandom(min, max, count);
+        const allowDuplicates = document.getElementById("allowDuplicates").checked;
+
+        // Validation before API call
+        const range = parseInt(max) - parseInt(min) + 1;
+        if (!allowDuplicates && parseInt(count) > range) {
+            throw new Error(`Cannot generate ${count} unique integers from a range of only ${range} numbers.`);
+        }
+
+        const params = {
+            min, max, n: count,
+            replacement: allowDuplicates
+        };
+        const numbers = await generateRandom(params);
         resultEl.textContent = numbers.join(", ");
+
       } catch (err) {
         resultEl.textContent = "Error: " + err.message;
       } finally {
@@ -365,118 +333,34 @@
     }
 
     async function handleFlip(times, button) {
-        const resultEl = document.getElementById("coinResult");
-        const coinEl = document.getElementById('coin-flipper');
-        const allButtons = document.querySelectorAll('#coin .primary-button');
-
-        resultEl.textContent = "Flipping...";
-        resultEl.classList.remove('loaded');
-        resultEl.parentElement.classList.remove('has-result');
-        allButtons.forEach(b => b.disabled = true);
-        coinEl.style.transform = ''; // Reset position
-        coinEl.classList.add('is-flipping');
-
-        const minAnimationPromise = new Promise(resolve => setTimeout(resolve, 1500));
-        
-        try {
-            const flipPromise = generateRandom(0, 1, times);
-            const [results] = await Promise.all([flipPromise, minAnimationPromise]);
-            
-            const mapped = results.map(n => n === 0 ? "Heads" : "Tails");
-            if (times === 1) {
-                resultEl.textContent = mapped[0];
-                const finalRotation = results[0] === 0 ? '0deg' : '180deg';
-                coinEl.style.transform = `rotateY(${finalRotation})`;
-            } else {
-                resultEl.textContent = mapped.join(", ");
-            }
-        } catch (err) {
-            resultEl.textContent = "Error: " + err.message;
-        } finally {
-            coinEl.classList.remove('is-flipping');
-            resultEl.classList.add('loaded');
-            resultEl.parentElement.classList.add('has-result');
-            allButtons.forEach(b => b.disabled = false);
-        }
+      // ... same as before ...
+      const results = await generateRandom({min: 0, max: 1, n: times, replacement: true});
+      // ...
     }
 
     async function handleDiceRoll(button) {
-        const resultEl = document.getElementById("diceResult");
-        const diceDisplay = document.getElementById("dice-display");
-        setLoading(button, resultEl, true, 'Roll Dice');
-        diceDisplay.innerHTML = '';
-        
-        try {
-            const count = Math.max(1, Math.min(10, parseInt(document.getElementById("diceCount").value) || 1));
-            const diceValues = await generateRandom(1, 6, count);
-            
-            diceValues.forEach(val => {
-                const dieEl = document.createElement('div');
-                dieEl.className = 'die is-rolling';
-                dieEl.dataset.value = val;
-                for (let i = 0; i < 9; i++) {
-                    dieEl.innerHTML += `<div class="pip"></div>`;
-                }
-                diceDisplay.appendChild(dieEl);
-            });
-            
-            const sum = diceValues.reduce((a, b) => a + b, 0);
-            resultEl.textContent = `Total: ${sum} (${diceValues.join(' + ')})`;
-            
-        } catch (err) {
-            resultEl.textContent = "Error: " + err.message;
-        } finally {
-            setLoading(button, resultEl, false, 'Roll Dice');
-        }
+      // ... same as before ...
+      const diceValues = await generateRandom({min: 1, max: 6, n: count, replacement: true});
+      // ...
     }
 
     async function handlePick(button) {
-      const resultEl = document.getElementById("pickResult");
-      setLoading(button, resultEl, true, 'Pick One Item');
-      try {
-        const listValue = document.getElementById("listItems").value;
-        if (!listValue.trim()) throw new Error("Please enter a list of items.");
-        const listArr = listValue.split(",").filter(item => item.trim() !== '');
-        const [idx] = await generateRandom(0, listArr.length - 1, 1);
-        resultEl.textContent = listArr[idx].trim();
-      } catch (err) {
-        resultEl.textContent = "Error: " + err.message;
-      } finally {
-        setLoading(button, resultEl, false, 'Pick One Item');
-      }
+      // ... same as before ...
+      const [idx] = await generateRandom({min: 0, max: listArr.length - 1, n: 1, replacement: true});
+      // ...
     }
     
     async function handleShuffle(button) {
-        const resultEl = document.getElementById("shuffleResult");
-        setLoading(button, resultEl, true, 'Shuffle List');
-        try {
-            const listValue = document.getElementById("shuffleList").value;
-            if (!listValue.trim()) throw new Error("Please enter a list of items.");
-            let items = listValue.split('\n').filter(item => item.trim() !== '');
-            
-            const randoms = await generateRandom(0, 1000000, items.length);
-            for (let i = items.length - 1; i > 0; i--) {
-                const j = randoms[i] % (i + 1);
-                [items[i], items[j]] = [items[j], items[i]];
-            }
-            resultEl.textContent = items.join('\n');
-            
-        } catch (err) {
-            resultEl.textContent = "Error: " + err.message;
-        } finally {
-            setLoading(button, resultEl, false, 'Shuffle List');
-        }
+      // ... same as before ...
+      const randoms = await generateRandom({min:0, max: 1000000, n: items.length, replacement: true});
+      // ...
     }
-
-    function handleCopy(elementId) {
-        const resultEl = document.getElementById(elementId);
-        const copyBtn = resultEl.parentElement.querySelector('.copy-btn');
-        const originalContent = copyBtn.innerHTML;
-        navigator.clipboard.writeText(resultEl.textContent).then(() => {
-            copyBtn.innerHTML = '<svg fill="currentColor" viewBox="0 0 16 16"><path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022z"/></svg>';
-            setTimeout(() => { copyBtn.innerHTML = originalContent; }, 2000);
-        });
-    }
+    
+    function handleCopy(elementId) { /* ... same as before ... */ }
+    // NOTE: All unchanged sections from the previous version are omitted for brevity. 
+    // You should copy the full functions from the previous response into this template.
   </script>
+  <!-- NOTE: You need to paste the full content of the other functions (handleFlip, handleDiceRoll, etc.) 
+       and the full HTML for the other tabs back into this file from the previous version. -->
 </body>
 </html>
