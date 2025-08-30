@@ -2,8 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale-1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>True Random Toolkit</title>
+  
+  <!-- PWA additions -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#ffffff"/>
+  <link rel="apple-touch-icon" href="/icon-192x192.png">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
@@ -395,14 +401,16 @@
       button.disabled = isLoading;
       button.textContent = isLoading ? 'Generating...' : originalText;
       const resultContainer = resultEl.closest('.result-container');
-      resultContainer.classList.remove('has-result');
-      if (!isLoading) {
-        resultEl.classList.add('loaded');
-        if(resultEl.textContent && !resultEl.textContent.startsWith('Error')) {
-             resultContainer.classList.add('has-result');
-        }
-      } else {
-        resultEl.classList.remove('loaded');
+      if (resultContainer) {
+          resultContainer.classList.remove('has-result');
+          if (!isLoading) {
+            resultEl.classList.add('loaded');
+            if(resultEl.textContent && !resultEl.textContent.startsWith('Error')) {
+                resultContainer.classList.add('has-result');
+            }
+          } else {
+            resultEl.classList.remove('loaded');
+          }
       }
     }
 
@@ -458,7 +466,7 @@
         if (includeSymbols) charSet += symbolChars;
 
         if (charSet === '') {
-            resultEl.textContent = "Please select at least one character type.";
+            resultEl.textContent = "Please select a character type.";
             resultContainer.classList.remove('has-result');
             updatePasswordStrength(0, 0);
             return;
@@ -615,6 +623,19 @@
             copyBtn.innerHTML = '<svg fill="currentColor" viewBox="0 0 16 16"><path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022z"/></svg>';
             setTimeout(() => { copyBtn.innerHTML = originalContent; }, 2000);
         });
+    }
+  </script>
+
+  <!-- PWA Service Worker Registration Script -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then(registration => {
+          console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        }, err => {
+          console.log('ServiceWorker registration failed: ', err);
+        });
+      });
     }
   </script>
 </body>
