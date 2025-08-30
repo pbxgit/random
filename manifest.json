@@ -1,0 +1,21 @@
+{
+  "name": "True Random Toolkit",
+  "short_name": "Random Toolkit",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "description": "A toolkit for generating truly random numbers, passwords, and more.",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
