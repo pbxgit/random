@@ -42,63 +42,56 @@
   
   <!-- PWA additions -->
   <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#0b0f19"/> <!-- Dark theme color for PWA bar -->
+  <meta name="theme-color" content="#11182a"/>
   <link rel="apple-touch-icon" href="/icon-192x192.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.comcom/css2?family=Inter:wght@400;600;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
   <style>
     /* CSS Variables for Theming */
     :root {
-      --bg-color: #0b0f19;
-      --card-bg-color: rgba(15, 23, 42, 0.55);
+      --bg-color: #11182a;
+      --card-bg-color: #1e293b;
       --text-color: #f8fafc;
       --muted-text-color: #94a3b8;
-      --border-color: rgba(55, 65, 81, 0.5);
+      --border-color: #334155;
+      --input-bg-color: #0f172a;
       --accent-1: #6366f1;
       --accent-2: #8b5cf6;
-      --accent-3: #f472b6;
       --accent-glow: 0 0 25px 0 color-mix(in srgb, var(--accent-1) 30%, transparent);
-      --die-bg: #334155;
+      --die-bg: #475569;
       --die-pip: #f8fafc;
-      --die-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      --die-shadow: 0 4px 6px rgba(0,0,0,0.2);
       --strength-weak: #ef4444;
       --strength-medium: #f97316;
       --strength-strong: #22c55e;
     }
 
-    /* Base Styles & Animated Background */
+    /* Base Styles & Background */
     *, *::before, *::after { box-sizing: border-box; }
     
     html {
-        height: 100%; /* Fixes white strip issue */
+        height: 100%;
     }
     
     body {
-      height: 100%; /* Fixes white strip issue */
+      height: 100%;
       margin: 0;
       font-family: 'Inter', sans-serif;
       background-color: var(--bg-color);
       color: var(--text-color);
-      display: grid; /* More robust centering */
-      place-items: center; /* More robust centering */
+      display: grid;
+      place-items: center;
       padding: 20px;
-      background: linear-gradient(-45deg, var(--accent-1), var(--accent-2), var(--accent-3), var(--bg-color));
-      background-size: 400% 400%;
-      animation: moveGradient 25s ease infinite;
-    }
-
-    @keyframes moveGradient {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
+      background-image: radial-gradient(circle at 20% 20%, var(--accent-1), var(--bg-color) 35%),
+                        radial-gradient(circle at 80% 70%, var(--accent-2), var(--bg-color) 40%);
     }
 
     /* Page Load Animation */
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Main App Container with Glassmorphism */
+    /* Main App Container */
     .app-container {
       width: 100%;
       max-width: 500px;
@@ -106,8 +99,6 @@
       border-radius: 20px;
       border: 1px solid var(--border-color);
       box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
       overflow: hidden;
       display: flex;
       flex-direction: column;
@@ -123,14 +114,15 @@
       gap: 12px;
     }
     header h1 { font-size: 1.75rem; margin: 0; line-height: 1; }
-    header p { font-size: 1rem; margin: 0; line-height: 1.2; }
+    header p { font-size: 1rem; margin: 0; line-height: 1.2; font-weight: 600; }
+    header span { font-size: 0.8rem; color: var(--muted-text-color); font-weight: 400; }
 
     main { padding: 24px; display: flex; flex-direction: column; gap: 20px; }
 
     /* Tab Navigation - SCROLLABLE */
     .tabs { 
       display: flex; 
-      justify-content: flex-start; /* Start from left */
+      justify-content: flex-start;
       border-bottom: 1px solid var(--border-color);
       position: relative;
       overflow-x: auto;
@@ -142,7 +134,7 @@
     .tab-button {
       flex-shrink: 0;
       padding: 16px 16px; background: none; border: none;
-      color: var(--muted-text-color); font-size: 0.95rem; font-weight: 500;
+      color: var(--muted-text-color); font-size: 0.95rem; font-weight: 600;
       cursor: pointer; transition: color 0.2s; white-space: nowrap;
       position: relative; z-index: 1;
     }
@@ -163,9 +155,9 @@
 
     /* Form Elements */
     .form-group { margin-bottom: 16px; }
-    .form-group label { display: block; font-weight: 500; margin-bottom: 8px; font-size: 0.9rem; }
+    .form-group label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem; }
     .form-group-inline { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
-    .form-group-inline label { margin-bottom: 0; }
+    .form-group-inline label { margin-bottom: 0; font-weight: 400; }
     .form-group-inline input[type="checkbox"] { width: 16px; height: 16px; }
     
     .compact-inputs { display: flex; gap: 12px; margin-bottom: 16px; }
@@ -174,7 +166,7 @@
     input, textarea {
       display: block; width: 100%; padding: 12px; border-radius: 8px;
       border: 1px solid var(--border-color);
-      background-color: color-mix(in srgb, var(--bg-color) 30%, transparent);
+      background-color: var(--input-bg-color);
       color: var(--text-color); font-size: 1rem;
       transition: border-color 0.2s, box-shadow 0.2s; font-family: 'Inter', sans-serif;
     }
@@ -188,7 +180,7 @@
       flex-grow: 1; 
       background: linear-gradient(45deg, var(--accent-1), var(--accent-2));
       color: white; border: none; padding: 14px; border-radius: 8px;
-      font-size: 1rem; font-weight: 500; cursor: pointer;
+      font-size: 1rem; font-weight: 700; cursor: pointer;
       transition: transform 0.2s, box-shadow 0.2s;
     }
     .primary-button:hover { 
@@ -200,7 +192,7 @@
 
     /* Result Display */
     .result-container {
-      background-color: color-mix(in srgb, var(--bg-color) 80%, var(--card-bg-color));
+      background-color: var(--input-bg-color);
       border-radius: 8px; padding: 20px;
       min-height: 100px; display: flex; justify-content: center; align-items: center;
       text-align: center; word-break: break-all; position: relative;
@@ -282,7 +274,7 @@
     .length-slider { display: flex; align-items: center; gap: 12px; }
     .length-slider input[type="range"] { flex-grow: 1; }
     .length-slider input[type="number"] { width: 70px; }
-    .strength-meter { width: 100%; height: 8px; background-color: var(--bg-color); border-radius: 4px; overflow: hidden; margin-top: 8px; }
+    .strength-meter { width: 100%; height: 8px; background-color: var(--input-bg-color); border-radius: 4px; overflow: hidden; margin-top: 8px; }
     .strength-bar { width: 0%; height: 100%; background-color: var(--strength-weak); transition: width 0.3s, background-color 0.3s; }
   </style>
 </head>
@@ -291,7 +283,7 @@
   <div class="app-container">
     <header>
       <h1>🎲</h1>
-      <p><strong>True Random Toolkit</strong><br><span style="font-size: 0.8rem; color: var(--muted-text-color);">Powered by RANDOM.ORG</span></p>
+      <p>True Random Toolkit<br><span>Powered by RANDOM.ORG</span></p>
     </header>
     
     <nav class="tabs">
