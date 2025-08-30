@@ -52,11 +52,12 @@
     /* CSS Variables for Theming */
     :root {
       --bg-color: #11182a;
-      --card-bg-color: #1e293b;
+      --card-bg-color: rgba(30, 41, 59, 0.7); /* MODIFIED for glassmorphism */
+      --header-bg-color: rgba(30, 41, 59, 0.6); /* NEW for glassmorphism */
       --text-color: #f8fafc;
       --muted-text-color: #94a3b8;
-      --border-color: #334155;
-      --input-bg-color: #0f172a;
+      --border-color: rgba(51, 65, 85, 0.7); /* MODIFIED for glassmorphism */
+      --input-bg-color: rgba(15, 23, 42, 0.8); /* MODIFIED for glassmorphism */
       --accent-1: #6366f1;
       --accent-2: #8b5cf6;
       --accent-glow: 0 0 25px 0 color-mix(in srgb, var(--accent-1) 30%, transparent);
@@ -112,6 +113,9 @@
       display: flex;
       align-items: center;
       gap: 16px;
+      background-color: var(--header-bg-color); /* ADDED for glassmorphism */
+      backdrop-filter: blur(10px); /* ADDED for glassmorphism */
+      -webkit-backdrop-filter: blur(10px); /* ADDED for glassmorphism */
     }
     header h1 {
       font-family: 'Playfair Display', serif;
@@ -139,6 +143,9 @@
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
+      background-color: var(--header-bg-color); /* ADDED for glassmorphism */
+      backdrop-filter: blur(10px); /* ADDED for glassmorphism */
+      -webkit-backdrop-filter: blur(10px); /* ADDED for glassmorphism */
     }
     .tabs::-webkit-scrollbar { display: none; }
     
@@ -193,6 +200,7 @@
       color: white; border: none; padding: 14px; border-radius: 8px;
       font-size: 1rem; font-weight: 600; cursor: pointer;
       transition: transform 0.2s, box-shadow 0.2s;
+      background-size: 200% auto;
     }
     .primary-button:hover { 
       transform: translateY(-2px);
@@ -215,7 +223,7 @@
 
     /* Copy Button */
     .copy-btn {
-      position: absolute; top: 8px; right: 8px; background: var(--card-bg-color);
+      position: absolute; top: 8px; right: 8px; background: rgba(30, 41, 59, 0.7); /* MODIFIED for glassmorphism */
       border: 1px solid var(--border-color); border-radius: 6px; width: 32px;
       height: 32px; cursor: pointer; display: none; align-items: center;
       justify-content: center; color: var(--muted-text-color);
@@ -231,8 +239,7 @@
         height: 100px; 
         position: relative; 
         transform-style: preserve-3d;
-        /* The transition is key for the new animation */
-        transition: transform 2.5s cubic-bezier(0.25, 1, 0.5, 1);
+        transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1); /* MODIFIED DURATION */
     }
     .coin-face {
       position: absolute; width: 100%; height: 100%; border-radius: 50%;
@@ -678,7 +685,7 @@
                     b.disabled = false;
                     b.textContent = i === 0 ? 'Flip Once' : 'Flip 10 Times';
                 });
-            }, 1500); // Must match CSS transition duration
+            }, 1500); // MODIFIED DURATION to match CSS transition
         }
     }
 
@@ -767,7 +774,10 @@
         } catch (err) {
             resultEl.textContent = "Error: " + err.message;
         } finally {
-            setLoading(button, resultEl, false, originalButtonText);
+            // Use a short timeout to make the transition feel less abrupt
+            setTimeout(() => {
+                setLoading(button, resultEl, false, originalButtonText);
+            }, 200);
         }
     }
 
