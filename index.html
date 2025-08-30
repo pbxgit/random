@@ -206,6 +206,51 @@
         color: var(--text-color);
         animation: fadeIn 0.5s ease-out;
     }
+    
+    /* Coin Flip Animation Styles */
+    .coin-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 24px;
+        perspective: 1000px; /* Enables 3D space */
+    }
+
+    .coin {
+        width: 100px;
+        height: 100px;
+        position: relative;
+        transform-style: preserve-3d;
+        transition: transform 1.5s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+    }
+
+    .coin-face {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.2rem;
+        font-weight: bold;
+        backface-visibility: hidden; /* Hides the back of the element */
+    }
+
+    .coin-front {
+        background-color: #ffd700; /* Gold */
+        color: #8b5a00;
+        transform: rotateY(0deg);
+    }
+
+    .coin-back {
+        background-color: #c0c0c0; /* Silver */
+        color: #4a4a4a;
+        transform: rotateY(180deg);
+    }
+    
+    .coin.is-flipping {
+        transform: rotateY(1800deg); /* Spins 5 times */
+    }
 
     @keyframes fadeIn {
         from {
@@ -256,6 +301,12 @@
 
       <!-- Coin Flip Section -->
       <section id="coin" class="tab-content">
+        <div class="coin-container">
+            <div id="coin-flipper" class="coin">
+                <div class="coin-face coin-front">Heads</div>
+                <div class="coin-face coin-back">Tails</div>
+            </div>
+        </div>
         <p style="text-align: center; color: var(--muted-text-color); margin-top:0;">Choose how many coins you want to flip.</p>
         <div class="button-group">
             <button class="primary-button" onclick="handleFlip(1, this)">Flip Once</button>
@@ -302,6 +353,9 @@
       const contents = document.querySelectorAll('.tab-content');
       const buttons = document.querySelectorAll('.tab-button');
       
+      // Reset coin animation when navigating away
+      document.getElementById('coin-flipper').style.transform = '';
+
       contents.forEach(content => {
         content.classList.remove('active');
       });
@@ -347,24 +401,49 @@
 
     async function handleFlip(times, button) {
       const resultEl = document.getElementById("coinResult");
+      const coinEl = document.getElementById('coin-flipper');
       
-      button.dataset.originalText = button.textContent;
-      document.querySelectorAll('#coin .primary-button').forEach(b => b.disabled = true);
-      button.textContent = 'Flipping...';
+      // 1. Prepare for animation
+      resultEl.textContent = "Flipping...";
       resultEl.classList.remove('loaded');
+      document.querySelectorAll('#coin .primary-button').forEach(b => b.disabled = true);
+      
+      // Remove previous result states
+      coinEl.style.transform = ''; 
+
+      // 2. Start the API call
+      const flipPromise = generateRandom(0, 1, times);
+
+      // 3. Start the animation simultaneously
+      setTimeout(() => {
+        coinEl.classList.add('is-flipping');
+      }, 10);
 
       try {
-        const results = await generateRandom(0, 1, times);
+        // 4. Wait for the API result
+        const results = await flipPromise;
         const mapped = results.map(n => n === 0 ? "Heads" : "Tails");
-        resultEl.textContent = mapped.join(", ");
+
+        // 5. Wait for the animation to finish
+        setTimeout(() => {
+          coinEl.classList.remove('is-flipping');
+          
+          if (times === 1) {
+              const finalRotation = results[0] === 0 ? '0deg' : '180deg';
+              coinEl.style.transform = `rotateY(${finalRotation})`;
+              resultEl.textContent = "Result: " + mapped[0];
+          } else {
+              resultEl.textContent = "Result: " + mapped.join(", ");
+          }
+
+          resultEl.classList.add('loaded');
+          document.querySelectorAll('#coin .primary-button').forEach(b => b.disabled = false);
+
+        }, 1500); // Must match the CSS transition duration
+
       } catch (err) {
         resultEl.textContent = "Error: " + err.message;
-      } finally {
-        document.querySelectorAll('#coin .primary-button').forEach((b, index) => {
-            b.disabled = false;
-            b.textContent = index === 0 ? 'Flip Once' : 'Flip 10 Times';
-        });
-        resultEl.classList.add('loaded');
+        document.querySelectorAll('#coin .primary-button').forEach(b => b.disabled = false);
       }
     }
 
