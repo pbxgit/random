@@ -7,7 +7,7 @@
   
   <!-- PWA additions -->
   <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#111827"/> <!-- Dark theme color for PWA bar -->
+  <meta name="theme-color" content="#0b0f19"/> <!-- Dark theme color for PWA bar -->
   <link rel="apple-touch-icon" href="/icon-192x192.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,21 +16,23 @@
   <style>
     /* CSS Variables for Theming */
     :root {
-      --bg-color-light: #e0e7ff;
+      --bg-color-light: #f4f7f9;
       --card-bg-light: rgba(255, 255, 255, 0.65);
       --text-color-light: #111827;
       --muted-text-light: #4b5563;
       --border-color-light: rgba(229, 231, 235, 0.7);
       --accent-1-light: #4f46e5;
       --accent-2-light: #7c3aed;
+      --accent-3-light: #db2777;
 
-      --bg-color-dark: #0f172a;
-      --card-bg-dark: rgba(30, 41, 59, 0.65);
+      --bg-color-dark: #0b0f19;
+      --card-bg-dark: rgba(15, 23, 42, 0.5);
       --text-color-dark: #f8fafc;
       --muted-text-dark: #94a3b8;
-      --border-color-dark: rgba(55, 65, 81, 0.7);
-      --accent-1-dark: #818cf8;
-      --accent-2-dark: #a78bfa;
+      --border-color-dark: rgba(55, 65, 81, 0.5);
+      --accent-1-dark: #6366f1;
+      --accent-2-dark: #8b5cf6;
+      --accent-3-dark: #f472b6;
 
       --strength-weak: #ef4444;
       --strength-medium: #f97316;
@@ -44,6 +46,7 @@
       --border-color: var(--border-color-light);
       --accent-1: var(--accent-1-light);
       --accent-2: var(--accent-2-light);
+      --accent-3: var(--accent-3-light);
       --accent-glow: 0 0 25px 0 color-mix(in srgb, var(--accent-1) 30%, transparent);
       --die-bg: #fff;
       --die-pip: #111827;
@@ -59,6 +62,7 @@
         --border-color: var(--border-color-dark);
         --accent-1: var(--accent-1-dark);
         --accent-2: var(--accent-2-dark);
+        --accent-3: var(--accent-3-dark);
         --die-bg: #334155;
         --die-pip: #f8fafc;
         --die-shadow: 0 2px 4px rgba(0,0,0,0.3);
@@ -68,6 +72,12 @@
     /* Base Styles & Animated Background */
     *, *::before, *::after { box-sizing: border-box; }
     
+    html, body {
+        height: 100%; /* Fixes white strip issue */
+        margin: 0;
+        overflow-x: hidden; /* Prevents horizontal scroll on the body */
+    }
+    
     @keyframes moveGradient {
         0% { background-position: 0% 50%; }
         50% { background-position: 100% 50%; }
@@ -75,19 +85,17 @@
     }
 
     body {
-      margin: 0;
       font-family: 'Inter', sans-serif;
       background-color: var(--bg-color);
       color: var(--text-color);
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
       padding: 20px;
       transition: background-color 0.3s, color 0.3s;
-      background: linear-gradient(-45deg, var(--accent-1), var(--accent-2), var(--bg-color), var(--bg-color));
-      background-size: 300% 300%;
-      animation: moveGradient 20s ease infinite;
+      background: linear-gradient(-45deg, var(--accent-1), var(--accent-2), var(--accent-3), var(--bg-color));
+      background-size: 400% 400%;
+      animation: moveGradient 25s ease infinite;
     }
 
     /* Page Load Animation */
@@ -122,21 +130,25 @@
 
     main { padding: 24px; display: flex; flex-direction: column; gap: 20px; }
 
-    /* Tab Navigation */
+    /* Tab Navigation - SCROLLABLE */
     .tabs { 
       display: flex; 
-      justify-content: space-around; 
+      justify-content: flex-start; /* Start from left */
       border-bottom: 1px solid var(--border-color);
       position: relative;
+      overflow-x: auto; /* Enable horizontal scrolling */
+      -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+      scrollbar-width: none; /* Hide scrollbar for Firefox */
     }
+    .tabs::-webkit-scrollbar { display: none; /* Hide scrollbar for Chrome/Safari */ }
+    
     .tab-button {
-      flex: 1; padding: 16px 4px; background: none; border: none;
-      color: var(--muted-text-color); font-size: 0.85rem; font-weight: 500;
+      flex-shrink: 0; /* Prevent buttons from shrinking */
+      padding: 16px 14px; background: none; border: none;
+      color: var(--muted-text-color); font-size: 0.9rem; font-weight: 500;
       cursor: pointer; transition: color 0.2s; white-space: nowrap;
-      position: relative;
-      z-index: 1;
+      position: relative; z-index: 1;
     }
-    @media (max-width: 400px) { .tab-button { font-size: 0.75rem; } }
     .tab-button:hover { color: var(--accent-1); }
     .tab-button.active { color: var(--text-color); }
     
@@ -160,7 +172,7 @@
     .form-group-inline input[type="checkbox"] { width: 16px; height: 16px; }
     
     .compact-inputs { display: flex; gap: 12px; margin-bottom: 16px; }
-    .compact-inputs .form-group { flex: 1; margin-bottom: 0; }
+    .compact-inputs .form-group { flex: 1; margin-bottom: 0; min-width: 80px; }
     
     input, textarea {
       display: block; width: 100%; padding: 12px; border-radius: 8px;
@@ -420,8 +432,8 @@
             }
         }
         
-        moveUnderlineToActiveTab(); // Initial position
-        window.addEventListener('resize', moveUnderlineToActiveTab); // Update on resize
+        moveUnderlineToActiveTab();
+        window.addEventListener('resize', moveUnderlineToActiveTab);
 
         // Integer validation
         const minInput = document.getElementById('min');
