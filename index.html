@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>True Random Generator</title>
+  <title>True Random Toolkit</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
@@ -44,9 +44,9 @@
       color: var(--text-color);
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start; /* Align to top for longer content */
       min-height: 100vh;
-      padding: 20px;
+      padding: 40px 20px;
       transition: background-color 0.3s, color 0.3s;
     }
 
@@ -89,21 +89,23 @@
     /* Tab Navigation */
     .tabs {
       display: flex;
+      flex-wrap: wrap; /* Allow tabs to wrap on small screens */
       justify-content: space-around;
       border-bottom: 1px solid var(--border-color);
     }
 
     .tab-button {
       flex: 1;
-      padding: 16px;
+      padding: 16px 8px; /* Adjusted padding */
       background: none;
       border: none;
       border-bottom: 3px solid transparent;
       color: var(--muted-text-color);
-      font-size: 1rem;
+      font-size: 0.95rem; /* Slightly smaller font */
       font-weight: 500;
       cursor: pointer;
       transition: color 0.2s, border-color 0.2s;
+      white-space: nowrap; /* Prevent wrapping */
     }
 
     .tab-button:hover {
@@ -134,7 +136,7 @@
         font-size: 0.9rem;
     }
 
-    input[type="number"], input[type="text"] {
+    input[type="number"], input[type="text"], textarea {
       display: block;
       width: 100%;
       padding: 12px;
@@ -144,9 +146,15 @@
       color: var(--text-color);
       font-size: 1rem;
       transition: border-color 0.2s, box-shadow 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    textarea {
+        min-height: 120px;
+        resize: vertical;
     }
 
-    input[type="number"]:focus, input[type="text"]:focus {
+    input[type="number"]:focus, input[type="text"]:focus, textarea:focus {
         outline: none;
         border-color: var(--accent-color);
         box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 20%, transparent);
@@ -193,36 +201,75 @@
       justify-content: center;
       align-items: center;
       text-align: center;
-      word-break: break-all;
+      word-break: break-word;
+      position: relative;
     }
 
     .result-text {
       font-size: 1.1rem;
       font-weight: 500;
       color: var(--muted-text-color);
+      white-space: pre-wrap; /* For shuffled list */
     }
 
     .result-text.loaded {
         color: var(--text-color);
         animation: fadeIn 0.5s ease-out;
     }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
     
-    /* Coin Flip Animation Styles */
+    /* Copy Button */
+    .copy-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: var(--card-bg-color);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        width: 32px;
+        height: 32px;
+        cursor: pointer;
+        display: none; /* Hidden by default */
+        align-items: center;
+        justify-content: center;
+        color: var(--muted-text-color);
+    }
+    .copy-btn:hover {
+        background-color: var(--bg-color);
+        color: var(--accent-color);
+    }
+    .result-container.has-result .copy-btn {
+        display: flex; /* Show when result is present */
+    }
+    .copy-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    /* Coin Flip Animation */
     .coin-container {
         display: flex;
         justify-content: center;
         margin-bottom: 24px;
-        perspective: 1000px; /* Enables 3D space */
+        perspective: 1000px;
     }
-
     .coin {
         width: 100px;
         height: 100px;
         position: relative;
         transform-style: preserve-3d;
-        transition: transform 1.5s cubic-bezier(0.45, 0.05, 0.55, 0.95);
     }
-
+    .coin.is-flipping {
+        animation: spin 1.5s linear infinite;
+    }
+    @keyframes spin {
+        from { transform: rotateY(0deg); }
+        to { transform: rotateY(360deg); }
+    }
     .coin-face {
         position: absolute;
         width: 100%;
@@ -233,243 +280,293 @@
         align-items: center;
         font-size: 1.2rem;
         font-weight: bold;
-        backface-visibility: hidden; /* Hides the back of the element */
+        backface-visibility: hidden;
     }
+    .coin-front { background-color: #ffd700; color: #8b5a00; transform: rotateY(0deg); }
+    .coin-back { background-color: #c0c0c0; color: #4a4a4a; transform: rotateY(180deg); }
 
-    .coin-front {
-        background-color: #ffd700; /* Gold */
-        color: #8b5a00;
-        transform: rotateY(0deg);
+    /* Dice Roller Styles */
+    .dice-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        justify-content: center;
+        align-items: center;
+        min-height: 80px;
+        margin-bottom: 20px;
     }
-
-    .coin-back {
-        background-color: #c0c0c0; /* Silver */
-        color: #4a4a4a;
-        transform: rotateY(180deg);
+    .die {
+        width: 60px;
+        height: 60px;
+        border-radius: 8px;
+        background-color: var(--text-color);
+        color: var(--bg-color);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 2.5rem;
+        font-weight: bold;
+    }
+    .die.is-rolling {
+        animation: roll 0.5s ease-in-out;
+    }
+    @keyframes roll {
+        0% { transform: rotate(0deg) scale(0.8); }
+        50% { transform: rotate(180deg) scale(1.1); }
+        100% { transform: rotate(360deg) scale(1); }
     }
     
-    .coin.is-flipping {
-        transform: rotateY(1800deg); /* Spins 5 times */
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
   </style>
 </head>
 <body>
 
   <div class="app-container">
     <header>
-      <h1>🎲 True Random Generator</h1>
+      <h1>🎲 True Random Toolkit</h1>
       <p>Powered by RANDOM.ORG</p>
     </header>
     
     <nav class="tabs">
       <button class="tab-button active" onclick="showTab('integers')">Integers</button>
       <button class="tab-button" onclick="showTab('coin')">Coin Flip</button>
+      <button class="tab-button" onclick="showTab('dice')">Dice Roller</button>
       <button class="tab-button" onclick="showTab('list')">List Picker</button>
+      <button class="tab-button" onclick="showTab('shuffle')">List Shuffler</button>
     </nav>
 
     <main>
       <!-- Generate Integer Section -->
       <section id="integers" class="tab-content active">
-        <div class="form-group">
-            <label for="min">Minimum Value</label>
-            <input id="min" type="number" value="1" />
-        </div>
-        <div class="form-group">
-            <label for="max">Maximum Value</label>
-            <input id="max" type="number" value="100" />
-        </div>
-        <div class="form-group">
-            <label for="count">Number of Integers</label>
-            <input id="count" type="number" value="1" />
-        </div>
+        <div class="form-group"><label for="min">Minimum Value</label><input id="min" type="number" value="1" /></div>
+        <div class="form-group"><label for="max">Maximum Value</label><input id="max" type="number" value="100" /></div>
+        <div class="form-group"><label for="count">Number of Integers</label><input id="count" type="number" value="1" /></div>
         <button class="primary-button" onclick="handleGenerate(this)">Generate</button>
-        <div class="result-container" style="margin-top: 20px;">
-            <p id="result" class="result-text">Your random numbers will appear here.</p>
+        <div id="integersResultContainer" class="result-container" style="margin-top: 20px;">
+          <p id="result" class="result-text">Your random numbers will appear here.</p>
+          <button class="copy-btn" title="Copy to clipboard" onclick="handleCopy('result')"><svg fill="currentColor" viewBox="0 0 16 16"><path d="M13 4.5a.5.5 0 0 0-.5-.5H5.707l.647-.646a.5.5 0 1 0-.708-.708l-1.5 1.5a.5.5 0 0 0 0 .708l1.5 1.5a.5.5 0 0 0 .708-.708L5.707 5H12.5a.5.5 0 0 0 .5-.5z"/><path d="M4 2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V2zm2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H6zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H2z"/></svg></button>
         </div>
       </section>
 
       <!-- Coin Flip Section -->
       <section id="coin" class="tab-content">
-        <div class="coin-container">
-            <div id="coin-flipper" class="coin">
-                <div class="coin-face coin-front">Heads</div>
-                <div class="coin-face coin-back">Tails</div>
-            </div>
-        </div>
-        <p style="text-align: center; color: var(--muted-text-color); margin-top:0;">Choose how many coins you want to flip.</p>
+        <div class="coin-container"><div id="coin-flipper" class="coin"><div class="coin-face coin-front"></div><div class="coin-face coin-back"></div></div></div>
+        <p style="text-align: center; color: var(--muted-text-color); margin-top:0;">Flip one or more coins.</p>
         <div class="button-group">
-            <button class="primary-button" onclick="handleFlip(1, this)">Flip Once</button>
-            <button class="primary-button" onclick="handleFlip(10, this)">Flip 10 Times</button>
+          <button class="primary-button" onclick="handleFlip(1, this)">Flip Once</button>
+          <button class="primary-button" onclick="handleFlip(10, this)">Flip 10 Times</button>
         </div>
-         <div class="result-container" style="margin-top: 20px;">
-            <p id="coinResult" class="result-text">The coin flip result will appear here.</p>
+        <div id="coinResultContainer" class="result-container" style="margin-top: 20px;">
+          <p id="coinResult" class="result-text">The coin flip result will appear here.</p>
+          <button class="copy-btn" title="Copy to clipboard" onclick="handleCopy('coinResult')"><svg fill="currentColor" viewBox="0 0 16 16"><path d="M13 4.5a.5.5 0 0 0-.5-.5H5.707l.647-.646a.5.5 0 1 0-.708-.708l-1.5 1.5a.5.5 0 0 0 0 .708l1.5 1.5a.5.5 0 0 0 .708-.708L5.707 5H12.5a.5.5 0 0 0 .5-.5z"/><path d="M4 2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V2zm2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H6zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H2z"/></svg></button>
+        </div>
+      </section>
+      
+      <!-- Dice Roller Section -->
+      <section id="dice" class="tab-content">
+        <div id="dice-display" class="dice-container"></div>
+        <div class="form-group">
+            <label for="diceCount">Number of Dice to Roll</label>
+            <input id="diceCount" type="number" value="2" min="1" max="10" />
+        </div>
+        <button class="primary-button" onclick="handleDiceRoll(this)">Roll Dice</button>
+        <div id="diceResultContainer" class="result-container" style="margin-top: 20px;">
+          <p id="diceResult" class="result-text">Your dice roll totals will appear here.</p>
+          <button class="copy-btn" title="Copy to clipboard" onclick="handleCopy('diceResult')"><svg fill="currentColor" viewBox="0 0 16 16"><path d="M13 4.5a.5.5 0 0 0-.5-.5H5.707l.647-.646a.5.5 0 1 0-.708-.708l-1.5 1.5a.5.5 0 0 0 0 .708l1.5 1.5a.5.5 0 0 0 .708-.708L5.707 5H12.5a.5.5 0 0 0 .5-.5z"/><path d="M4 2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V2zm2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H6zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H2z"/></svg></button>
         </div>
       </section>
 
       <!-- Pick From List Section -->
       <section id="list" class="tab-content">
         <div class="form-group">
-            <label for="listItems">Enter items separated by a comma</label>
-            <input id="listItems" type="text" placeholder="apple, banana, cherry, orange" />
+          <label for="listItems">Enter items separated by a comma</label>
+          <input id="listItems" type="text" placeholder="apple, banana, cherry, orange" />
         </div>
         <button class="primary-button" onclick="handlePick(this)">Pick One Item</button>
-        <div class="result-container" style="margin-top: 20px;">
-            <p id="pickResult" class="result-text">The randomly picked item will appear here.</p>
+        <div id="pickResultContainer" class="result-container" style="margin-top: 20px;">
+          <p id="pickResult" class="result-text">The randomly picked item will appear here.</p>
+          <button class="copy-btn" title="Copy to clipboard" onclick="handleCopy('pickResult')"><svg fill="currentColor" viewBox="0 0 16 16"><path d="M13 4.5a.5.5 0 0 0-.5-.5H5.707l.647-.646a.5.5 0 1 0-.708-.708l-1.5 1.5a.5.5 0 0 0 0 .708l1.5 1.5a.5.5 0 0 0 .708-.708L5.707 5H12.5a.5.5 0 0 0 .5-.5z"/><path d="M4 2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V2zm2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H6zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H2z"/></svg></button>
         </div>
+      </section>
+      
+      <!-- List Shuffler Section -->
+      <section id="shuffle" class="tab-content">
+          <div class="form-group">
+              <label for="shuffleList">Enter items, one per line</label>
+              <textarea id="shuffleList" placeholder="Apple&#10;Banana&#10;Cherry&#10;Orange"></textarea>
+          </div>
+          <button class="primary-button" onclick="handleShuffle(this)">Shuffle List</button>
+          <div id="shuffleResultContainer" class="result-container" style="margin-top: 20px;">
+              <p id="shuffleResult" class="result-text">Your shuffled list will appear here.</p>
+              <button class="copy-btn" title="Copy to clipboard" onclick="handleCopy('shuffleResult')"><svg fill="currentColor" viewBox="0 0 16 16"><path d="M13 4.5a.5.5 0 0 0-.5-.5H5.707l.647-.646a.5.5 0 1 0-.708-.708l-1.5 1.5a.5.5 0 0 0 0 .708l1.5 1.5a.5.5 0 0 0 .708-.708L5.707 5H12.5a.5.5 0 0 0 .5-.5z"/><path d="M4 2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V2zm2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H6zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H2z"/></svg></button>
+          </div>
       </section>
     </main>
   </div>
 
   <script>
-    // --- ESSENTIAL API LOGIC (Unchanged) ---
+    // --- ESSENTIAL API LOGIC ---
     async function generateRandom(min, max, n = 1) {
       const response = await fetch(`/api/generateIntegers?min=${min}&max=${max}&n=${n}`);
       if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || 'An unknown error occurred');
+        const errorData = await response.json().catch(() => ({ error: 'An unknown network error occurred.' }));
+        throw new Error(errorData.error || 'Failed to fetch random numbers.');
       }
       const data = await response.json();
-      if (data.error) {
-        throw new Error(data.error);
-      }
+      if (data.error) { throw new Error(data.error); }
       return data.numbers;
     }
 
-    // --- NEW FRONTEND & EVENT HANDLING LOGIC ---
-
-    // Tab switching function
+    // --- FRONTEND LOGIC ---
     function showTab(tabName) {
-      const contents = document.querySelectorAll('.tab-content');
-      const buttons = document.querySelectorAll('.tab-button');
-      
-      // Reset coin animation when navigating away
-      document.getElementById('coin-flipper').style.transform = '';
-
-      contents.forEach(content => {
-        content.classList.remove('active');
-      });
-      buttons.forEach(button => {
-        button.classList.remove('active');
-      });
-
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
       document.getElementById(tabName).classList.add('active');
       document.querySelector(`.tab-button[onclick="showTab('${tabName}')"]`).classList.add('active');
     }
 
-    // Helper to manage UI state
-    function setLoading(button, resultEl, isLoading) {
-        button.disabled = isLoading;
-        button.textContent = isLoading ? 'Generating...' : button.dataset.originalText;
-        if (!isLoading) {
-            resultEl.classList.add('loaded');
-        } else {
-            resultEl.classList.remove('loaded');
+    function setLoading(button, resultEl, isLoading, originalText) {
+      button.disabled = isLoading;
+      button.textContent = isLoading ? 'Generating...' : originalText;
+      resultEl.parentElement.classList.remove('has-result');
+      if (!isLoading) {
+        resultEl.classList.add('loaded');
+        if(resultEl.textContent && !resultEl.textContent.startsWith('Error')) {
+             resultEl.parentElement.classList.add('has-result');
         }
+      } else {
+        resultEl.classList.remove('loaded');
+      }
     }
-    
-    // --- MODIFIED HANDLERS ---
 
+    // --- EVENT HANDLERS ---
     async function handleGenerate(button) {
-      const min = document.getElementById("min").value;
-      const max = document.getElementById("max").value;
-      const count = document.getElementById("count").value;
       const resultEl = document.getElementById("result");
-      
-      button.dataset.originalText = 'Generate';
-      setLoading(button, resultEl, true);
-      
+      setLoading(button, resultEl, true, 'Generate');
       try {
+        const min = document.getElementById("min").value;
+        const max = document.getElementById("max").value;
+        const count = document.getElementById("count").value;
         const numbers = await generateRandom(min, max, count);
         resultEl.textContent = numbers.join(", ");
       } catch (err) {
         resultEl.textContent = "Error: " + err.message;
       } finally {
-        setLoading(button, resultEl, false);
+        setLoading(button, resultEl, false, 'Generate');
       }
     }
 
     async function handleFlip(times, button) {
-      const resultEl = document.getElementById("coinResult");
-      const coinEl = document.getElementById('coin-flipper');
-      
-      // 1. Prepare for animation
-      resultEl.textContent = "Flipping...";
-      resultEl.classList.remove('loaded');
-      document.querySelectorAll('#coin .primary-button').forEach(b => b.disabled = true);
-      
-      // Remove previous result states
-      coinEl.style.transform = ''; 
+        const resultEl = document.getElementById("coinResult");
+        const coinEl = document.getElementById('coin-flipper');
+        const allButtons = document.querySelectorAll('#coin .primary-button');
 
-      // 2. Start the API call
-      const flipPromise = generateRandom(0, 1, times);
-
-      // 3. Start the animation simultaneously
-      setTimeout(() => {
+        resultEl.textContent = "Flipping...";
+        resultEl.classList.remove('loaded');
+        resultEl.parentElement.classList.remove('has-result');
+        allButtons.forEach(b => b.disabled = true);
+        coinEl.style.transform = ''; // Reset position
         coinEl.classList.add('is-flipping');
-      }, 10);
 
-      try {
-        // 4. Wait for the API result
-        const results = await flipPromise;
-        const mapped = results.map(n => n === 0 ? "Heads" : "Tails");
+        // Promise for minimum animation time
+        const minAnimationPromise = new Promise(resolve => setTimeout(resolve, 1500));
+        
+        try {
+            const flipPromise = generateRandom(0, 1, times);
+            const [results] = await Promise.all([flipPromise, minAnimationPromise]);
+            
+            const mapped = results.map(n => n === 0 ? "Heads" : "Tails");
+            if (times === 1) {
+                resultEl.textContent = mapped[0];
+                const finalRotation = results[0] === 0 ? '0deg' : '180deg';
+                coinEl.style.transform = `rotateY(${finalRotation})`;
+            } else {
+                resultEl.textContent = mapped.join(", ");
+            }
+        } catch (err) {
+            resultEl.textContent = "Error: " + err.message;
+        } finally {
+            coinEl.classList.remove('is-flipping');
+            resultEl.classList.add('loaded');
+            resultEl.parentElement.classList.add('has-result');
+            allButtons.forEach(b => b.disabled = false);
+        }
+    }
 
-        // 5. Wait for the animation to finish
-        setTimeout(() => {
-          coinEl.classList.remove('is-flipping');
-          
-          if (times === 1) {
-              const finalRotation = results[0] === 0 ? '0deg' : '180deg';
-              coinEl.style.transform = `rotateY(${finalRotation})`;
-              resultEl.textContent = "Result: " + mapped[0];
-          } else {
-              resultEl.textContent = "Result: " + mapped.join(", ");
-          }
-
-          resultEl.classList.add('loaded');
-          document.querySelectorAll('#coin .primary-button').forEach(b => b.disabled = false);
-
-        }, 1500); // Must match the CSS transition duration
-
-      } catch (err) {
-        resultEl.textContent = "Error: " + err.message;
-        document.querySelectorAll('#coin .primary-button').forEach(b => b.disabled = false);
-      }
+    async function handleDiceRoll(button) {
+        const resultEl = document.getElementById("diceResult");
+        const diceDisplay = document.getElementById("dice-display");
+        setLoading(button, resultEl, true, 'Roll Dice');
+        diceDisplay.innerHTML = ''; // Clear previous dice
+        
+        try {
+            const count = parseInt(document.getElementById("diceCount").value) || 1;
+            const diceValues = await generateRandom(1, 6, count);
+            const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+            
+            diceValues.forEach(val => {
+                const dieEl = document.createElement('div');
+                dieEl.className = 'die is-rolling';
+                dieEl.textContent = diceFaces[val - 1];
+                diceDisplay.appendChild(dieEl);
+            });
+            
+            const sum = diceValues.reduce((a, b) => a + b, 0);
+            resultEl.textContent = `Total: ${sum} (${diceValues.join(', ')})`;
+            
+        } catch (err) {
+            resultEl.textContent = "Error: " + err.message;
+        } finally {
+            setLoading(button, resultEl, false, 'Roll Dice');
+        }
     }
 
     async function handlePick(button) {
-      const listValue = document.getElementById("listItems").value;
-      const pickEl = document.getElementById("pickResult");
-      
-      button.dataset.originalText = 'Pick One Item';
-      setLoading(button, pickEl, true);
-      
-      if (!listValue.trim()) {
-          pickEl.textContent = "Error: Please enter a list of items.";
-          setLoading(button, pickEl, false);
-          return;
-      }
-      
-      const listEl = listValue.split(",").filter(item => item.trim() !== '');
-
+      const resultEl = document.getElementById("pickResult");
+      setLoading(button, resultEl, true, 'Pick One Item');
       try {
-        const [idx] = await generateRandom(0, listEl.length - 1, 1);
-        pickEl.textContent = listEl[idx].trim();
+        const listValue = document.getElementById("listItems").value;
+        if (!listValue.trim()) throw new Error("Please enter a list of items.");
+        const listArr = listValue.split(",").filter(item => item.trim() !== '');
+        const [idx] = await generateRandom(0, listArr.length - 1, 1);
+        resultEl.textContent = listArr[idx].trim();
       } catch (err) {
-        pickEl.textContent = "Error: " + err.message;
+        resultEl.textContent = "Error: " + err.message;
       } finally {
-        setLoading(button, pickEl, false);
+        setLoading(button, resultEl, false, 'Pick One Item');
       }
+    }
+    
+    async function handleShuffle(button) {
+        const resultEl = document.getElementById("shuffleResult");
+        setLoading(button, resultEl, true, 'Shuffle List');
+        try {
+            const listValue = document.getElementById("shuffleList").value;
+            if (!listValue.trim()) throw new Error("Please enter a list of items.");
+            let items = listValue.split('\n').filter(item => item.trim() !== '');
+            
+            // Fisher-Yates shuffle algorithm powered by random.org
+            const randoms = await generateRandom(0, 1_000_000, items.length);
+            for (let i = items.length - 1; i > 0; i--) {
+                const j = randoms[i] % (i + 1);
+                [items[i], items[j]] = [items[j], items[i]]; // Swap
+            }
+            resultEl.textContent = items.join('\n');
+            
+        } catch (err) {
+            resultEl.textContent = "Error: " + err.message;
+        } finally {
+            setLoading(button, resultEl, false, 'Shuffle List');
+        }
+    }
+
+    function handleCopy(elementId) {
+        const resultEl = document.getElementById(elementId);
+        const copyBtn = resultEl.nextElementSibling;
+        const originalContent = copyBtn.innerHTML;
+        navigator.clipboard.writeText(resultEl.textContent).then(() => {
+            copyBtn.innerHTML = '<svg fill="currentColor" viewBox="0 0 16 16"><path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022z"/></svg>';
+            setTimeout(() => { copyBtn.innerHTML = originalContent; }, 2000);
+        });
     }
   </script>
 </body>
