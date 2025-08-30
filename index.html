@@ -167,10 +167,6 @@
     .form-group-inline { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
     .form-group-inline label { margin-bottom: 0; font-weight: 400; }
     .form-group-inline input[type="checkbox"] { width: 16px; height: 16px; }
-    .form-group-inline input[type="checkbox"]:disabled + label {
-        color: var(--muted-text-color);
-        cursor: not-allowed;
-    }
     
     .compact-inputs { display: flex; gap: 12px; margin-bottom: 16px; }
     .compact-inputs .form-group { flex: 1; margin-bottom: 0; min-width: 80px; }
@@ -321,6 +317,7 @@
       <button class="tab-button" onclick="showTab('list', this)">List Picker</button>
       <button class="tab-button" onclick="showTab('shuffle', this)">List Shuffler</button>
       <button class="tab-button" onclick="showTab('alphabetizer', this)">Alphabetizer</button>
+      <div class="tab-underline"></div>
     </nav>
 
     <main>
@@ -460,18 +457,22 @@
         const maxInput = document.getElementById('max');
         const countInput = document.getElementById('count');
         const duplicatesCheckbox = document.getElementById('allowDuplicates');
+        const duplicatesLabel = duplicatesCheckbox.nextElementSibling;
 
         function validateUniqueOption() {
             const min = parseInt(minInput.value) || 0;
             const max = parseInt(maxInput.value) || 0;
             const count = parseInt(countInput.value) || 0;
             const range = max - min + 1;
-
-            if ((count > range && range > 0) || count <= 1) {
+            if (count > range && range > 0) {
                 duplicatesCheckbox.checked = true;
                 duplicatesCheckbox.disabled = true;
+                duplicatesLabel.style.color = 'var(--muted-text-color)';
+                duplicatesLabel.title = `Cannot generate ${count} unique numbers from a range of only ${range}. Duplicates must be allowed.`;
             } else {
                 duplicatesCheckbox.disabled = false;
+                duplicatesLabel.style.color = '';
+                duplicatesLabel.title = '';
             }
         }
         minInput.addEventListener('input', validateUniqueOption);
@@ -504,8 +505,8 @@
 
     function setLoading(button, resultEl, isLoading, originalText) {
       button.disabled = isLoading;
-      button.textContent = isLoading ? 'Processing...' : originalText;
-      if (originalText.includes('Generate')) {
+      button.textContent = isLoading ? 'Sorting...' : originalText;
+      if (originalText !== 'Sort A-Z') {
         button.textContent = isLoading ? 'Generating...' : originalText;
       }
       const resultContainer = resultEl.closest('.result-container');
@@ -742,6 +743,7 @@
             let items = listValue.split('\n').filter(item => item.trim() !== '');
             if (items.length === 0) throw new Error("The list is empty.");
             
+            // Sort using localeCompare for proper, case-insensitive sorting
             items.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
 
             resultEl.textContent = items.join('\n');
