@@ -320,6 +320,7 @@
       <button class="tab-button" onclick="showTab('dice', this)">Dice Roller</button>
       <button class="tab-button" onclick="showTab('list', this)">List Picker</button>
       <button class="tab-button" onclick="showTab('shuffle', this)">List Shuffler</button>
+      <button class="tab-button" onclick="showTab('alphabetizer', this)">Alphabetizer</button>
       <div class="tab-underline"></div>
     </nav>
 
@@ -411,6 +412,18 @@
           <div class="result-container" style="margin-top: 20px;">
               <p id="shuffleResult" class="result-text">Your shuffled list will appear here.</p>
               <button class="copy-btn" title="Copy to clipboard" onclick="handleCopy('shuffleResult')"><svg fill="currentColor" viewBox="0 0 16 16"><path d="M13 4.5a.5.5 0 0 0-.5-.5H5.707l.647-.646a.5.5 0 1 0-.708-.708l-1.5 1.5a.5.5 0 0 0 0 .708l1.5 1.5a.5.5 0 0 0 .708-.708L5.707 5H12.5a.5.5 0 0 0 .5-.5z"/><path d="M4 2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V2zm2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H6zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H2z"/></svg></button>
+          </div>
+      </section>
+
+      <section id="alphabetizer" class="tab-content">
+          <div class="form-group">
+              <label for="alphabetizeList">Enter items, one per line</label>
+              <textarea id="alphabetizeList" placeholder="Orange&#10;Apple&#10;Cherry&#10;Banana"></textarea>
+          </div>
+          <button class="primary-button" onclick="handleAlphabetize(this)">Alphabetize List</button>
+          <div class="result-container" style="margin-top: 20px;">
+              <p id="alphabetizeResult" class="result-text">Your alphabetized list will appear here.</p>
+              <button class="copy-btn" title="Copy to clipboard" onclick="handleCopy('alphabetizeResult')"><svg fill="currentColor" viewBox="0 0 16 16"><path d="M13 4.5a.5.5 0 0 0-.5-.5H5.707l.647-.646a.5.5 0 1 0-.708-.708l-1.5 1.5a.5.5 0 0 0 0 .708l1.5 1.5a.5.5 0 0 0 .708-.708L5.707 5H12.5a.5.5 0 0 0 .5-.5z"/><path d="M4 2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V2zm2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H6zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H2z"/></svg></button>
           </div>
       </section>
     </main>
@@ -732,6 +745,29 @@
             resultEl.textContent = "Error: " + err.message;
         } finally {
             setLoading(button, resultEl, false, 'Shuffle List');
+        }
+    }
+
+    function handleAlphabetize(button) {
+        const resultEl = document.getElementById("alphabetizeResult");
+        const originalButtonText = 'Alphabetize List';
+        setLoading(button, resultEl, true, originalButtonText); // Use setLoading for UI consistency
+        button.textContent = 'Alphabetizing...'; // Provide more accurate button text
+        try {
+            const listValue = document.getElementById("alphabetizeList").value;
+            if (!listValue.trim()) throw new Error("Please enter a list of items.");
+
+            let items = listValue.split('\n').filter(item => item.trim() !== '');
+            if (items.length === 0) throw new Error("The list is empty.");
+
+            // Sort the array alphabetically using localeCompare for proper sorting
+            items.sort((a, b) => a.localeCompare(b));
+
+            resultEl.textContent = items.join('\n');
+        } catch (err) {
+            resultEl.textContent = "Error: " + err.message;
+        } finally {
+            setLoading(button, resultEl, false, originalButtonText);
         }
     }
 
