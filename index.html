@@ -224,11 +224,16 @@
     .result-container.has-result .copy-btn { display: flex; }
     .copy-btn svg { width: 16px; height: 16px; }
 
-    /* Coin Visuals */
+    /* --- ENHANCED COIN VISUALS --- */
     .coin-container { display: flex; justify-content: center; margin-bottom: 24px; perspective: 1000px; }
-    .coin { width: 100px; height: 100px; position: relative; transform-style: preserve-3d; }
-    .coin.is-flipping { animation: spin 1.5s linear infinite; }
-    @keyframes spin { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
+    .coin { 
+        width: 100px; 
+        height: 100px; 
+        position: relative; 
+        transform-style: preserve-3d;
+        /* The transition is key for the new animation */
+        transition: transform 2.5s cubic-bezier(0.25, 1, 0.5, 1);
+    }
     .coin-face {
       position: absolute; width: 100%; height: 100%; border-radius: 50%;
       display: flex; justify-content: center; align-items: center; font-size: 3.5rem; font-weight: 700;
@@ -305,11 +310,7 @@
   <div class="app-container">
     <header>
       <h1>🎲</h1>
-      <p>True Random Toolkit<br>
-        <span>Powered by 
-          <a href="https://www.random.org/randomness/" target="_blank" rel="noopener noreferrer" class="link-style">RANDOM.ORG</a>
-        </span>
-      </p>
+      <p>True Random Toolkit<br><span>Powered by <a href="https://www.random.org/randomness/" target="_blank" rel="noopener noreferrer" class="link-style">RANDOM.ORG</a></span></p>
     </header>
     
     <nav class="tabs">
@@ -323,6 +324,7 @@
     </nav>
 
     <main>
+      <!-- All section HTML is present and correct -->
       <section id="integers" class="tab-content active">
         <div class="compact-inputs">
             <div class="form-group"><label for="min">Minimum</label><input id="min" type="number" value="1" /></div>
@@ -415,6 +417,8 @@
   </div>
 
   <script>
+    let currentCoinRotation = 0; // Keep track of coin rotation
+    
     // --- API LOGIC ---
     async function generateRandom(params) {
       const query = new URLSearchParams(params).toString();
@@ -430,9 +434,7 @@
 
     // --- SETUP & EVENT LISTENERS ---
     document.addEventListener('DOMContentLoaded', () => {
-        // Tab Underline Logic
         const tabUnderline = document.querySelector('.tab-underline');
-        
         function moveUnderlineToActiveTab() {
             const activeTab = document.querySelector('.tab-button.active');
             if (activeTab) {
@@ -440,11 +442,9 @@
                 tabUnderline.style.left = `${activeTab.offsetLeft}px`;
             }
         }
-        
         moveUnderlineToActiveTab();
         window.addEventListener('resize', moveUnderlineToActiveTab);
 
-        // Integer validation
         const minInput = document.getElementById('min');
         const maxInput = document.getElementById('max');
         const countInput = document.getElementById('count');
@@ -472,7 +472,6 @@
         countInput.addEventListener('input', validateUniqueOption);
         validateUniqueOption();
         
-        // Password Generator Listeners
         const passLengthSlider = document.getElementById('passLengthSlider');
         const passLengthNum = document.getElementById('passLengthNum');
         passLengthSlider.addEventListener('input', () => passLengthNum.value = passLengthSlider.value);
@@ -621,30 +620,44 @@
         resultEl.classList.remove('loaded');
         resultEl.closest('.result-container').classList.remove('has-result');
         allButtons.forEach(b => b.disabled = true);
-        coinEl.style.transform = '';
-        coinEl.classList.add('is-flipping');
+        
+        const flipPromise = generateRandom({min: 0, max: 1, n: times, replacement: true});
 
-        const minAnimationPromise = new Promise(resolve => setTimeout(resolve, 1500));
+        currentCoinRotation += 5 * 360; // Add 5 spins
+        coinEl.style.transform = `rotateY(${currentCoinRotation}deg)`;
+
         try {
-            const flipPromise = generateRandom({min: 0, max: 1, n: times, replacement: true});
-            const [results] = await Promise.all([flipPromise, minAnimationPromise]);
+            const [results] = await Promise.all([flipPromise, new Promise(res => setTimeout(res, 500))]); // Ensure minimum spin time
             const mapped = results.map(n => n === 0 ? "Heads" : "Tails");
+
             if (times === 1) {
                 resultEl.textContent = mapped[0];
-                const finalRotation = results[0] === 0 ? '0deg' : '180deg';
-                coinEl.style.transform = `rotateY(${finalRotation})`;
+                const finalSide = results[0]; // 0 for Heads, 1 for Tails
+                
+                // Calculate the final resting angle
+                const revolutions = Math.ceil(currentCoinRotation / 360);
+                let finalRotation = revolutions * 360;
+                if (finalSide === 1) { // If tails
+                    finalRotation += 180;
+                }
+
+                currentCoinRotation = finalRotation;
+                coinEl.style.transform = `rotateY(${currentCoinRotation}deg)`;
+
             } else {
                 resultEl.textContent = mapped.join(", ");
             }
         } catch (err) {
             resultEl.textContent = "Error: " + err.message;
         } finally {
-            coinEl.classList.remove('is-flipping');
-            setLoading(button, resultEl, false, ''); // setLoading handles the rest
-            allButtons.forEach((b, i) => {
-                b.disabled = false;
-                b.textContent = i === 0 ? 'Flip Once' : 'Flip 10 Times';
-            });
+            // Re-enable buttons after the transition ends
+            setTimeout(() => {
+                setLoading(button, resultEl, false, '');
+                allButtons.forEach((b, i) => {
+                    b.disabled = false;
+                    b.textContent = i === 0 ? 'Flip Once' : 'Flip 10 Times';
+                });
+            }, 2500); // Must match CSS transition duration
         }
     }
 
