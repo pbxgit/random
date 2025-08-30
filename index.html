@@ -1,6 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!--
+    PROJECT DESCRIPTION & WORKFLOW
+
+    **Project:** True Random Toolkit
+    **Purpose:** A versatile web application for generating various types of random data. 
+    It serves as a feature-rich, installable Progressive Web App (PWA).
+
+    **Core Technology:**
+    - The randomness for Integers, Coin Flips, Dice Rolls, List Picking, and List Shuffling is 
+      sourced from RANDOM.ORG's API. This provides "true" randomness generated from atmospheric noise.
+    - The Password Generator uses the browser's built-in `crypto.getRandomValues`, a 
+      cryptographically secure pseudo-random number generator (CSPRNG), chosen for its
+      instantaneous speed and robust security for this specific task.
+
+    **Development & Deployment Workflow:**
+    1.  **Source Control:** The entire project codebase, including this `index.html` file, the PWA
+        assets (`manifest.json`, `sw.js`, icons), and the serverless function, is hosted in a 
+        repository on GitHub.
+    2.  **Frontend:** The user interface is a single-page application built with vanilla HTML, CSS,
+        and JavaScript. There are no external frameworks.
+    3.  **Backend:** The backend is a single Vercel Serverless Function located at `/api/generateIntegers.js`.
+        - This Node.js function acts as a secure proxy. The frontend sends requests to this endpoint.
+        - The function then calls the RANDOM.ORG API, embedding a secret API key.
+        - The API key is stored securely as an Environment Variable within the Vercel project settings, 
+          never exposing it to the frontend.
+    4.  **Deployment:** The GitHub repository is linked to a Vercel project. Every `git push` to the main
+        branch automatically triggers a new deployment on Vercel, making the updated site live.
+
+    **PWA (Progressive Web App) Features:**
+    - **Installable:** Using the `manifest.json` file, the app can be installed on mobile and desktop
+      devices, appearing like a native app.
+    - **Offline Capable:** The `sw.js` (Service Worker) caches the main application shell (HTML, CSS, JS, fonts).
+      This allows the app to load and be usable even without an internet connection. API-dependent
+      features will gracefully fail and show an error when offline.
+  -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>True Random Toolkit</title>
@@ -16,86 +51,48 @@
   <style>
     /* CSS Variables for Theming */
     :root {
-      --bg-color-light: #f4f7f9;
-      --card-bg-light: rgba(255, 255, 255, 0.65);
-      --text-color-light: #111827;
-      --muted-text-light: #4b5563;
-      --border-color-light: rgba(229, 231, 235, 0.7);
-      --accent-1-light: #4f46e5;
-      --accent-2-light: #7c3aed;
-      --accent-3-light: #db2777;
-
-      --bg-color-dark: #0b0f19;
-      --card-bg-dark: rgba(15, 23, 42, 0.5);
-      --text-color-dark: #f8fafc;
-      --muted-text-dark: #94a3b8;
-      --border-color-dark: rgba(55, 65, 81, 0.5);
-      --accent-1-dark: #6366f1;
-      --accent-2-dark: #8b5cf6;
-      --accent-3-dark: #f472b6;
-
+      --bg-color: #0b0f19;
+      --card-bg-color: rgba(15, 23, 42, 0.55);
+      --text-color: #f8fafc;
+      --muted-text-color: #94a3b8;
+      --border-color: rgba(55, 65, 81, 0.5);
+      --accent-1: #6366f1;
+      --accent-2: #8b5cf6;
+      --accent-3: #f472b6;
+      --accent-glow: 0 0 25px 0 color-mix(in srgb, var(--accent-1) 30%, transparent);
+      --die-bg: #334155;
+      --die-pip: #f8fafc;
+      --die-shadow: 0 2px 4px rgba(0,0,0,0.3);
       --strength-weak: #ef4444;
       --strength-medium: #f97316;
       --strength-strong: #22c55e;
-      
-      /* Default to light theme */
-      --bg-color: var(--bg-color-light);
-      --card-bg-color: var(--card-bg-light);
-      --text-color: var(--text-color-light);
-      --muted-text-color: var(--muted-text-light);
-      --border-color: var(--border-color-light);
-      --accent-1: var(--accent-1-light);
-      --accent-2: var(--accent-2-light);
-      --accent-3: var(--accent-3-light);
-      --accent-glow: 0 0 25px 0 color-mix(in srgb, var(--accent-1) 30%, transparent);
-      --die-bg: #fff;
-      --die-pip: #111827;
-      --die-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg-color: var(--bg-color-dark);
-        --card-bg-color: var(--card-bg-dark);
-        --text-color: var(--text-color-dark);
-        --muted-text-color: var(--muted-text-dark);
-        --border-color: var(--border-color-dark);
-        --accent-1: var(--accent-1-dark);
-        --accent-2: var(--accent-2-dark);
-        --accent-3: var(--accent-3-dark);
-        --die-bg: #334155;
-        --die-pip: #f8fafc;
-        --die-shadow: 0 2px 4px rgba(0,0,0,0.3);
-      }
     }
 
     /* Base Styles & Animated Background */
     *, *::before, *::after { box-sizing: border-box; }
     
-    html, body {
+    html {
         height: 100%; /* Fixes white strip issue */
-        margin: 0;
-        overflow-x: hidden; /* Prevents horizontal scroll on the body */
     }
     
+    body {
+      height: 100%; /* Fixes white strip issue */
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      display: grid; /* More robust centering */
+      place-items: center; /* More robust centering */
+      padding: 20px;
+      background: linear-gradient(-45deg, var(--accent-1), var(--accent-2), var(--accent-3), var(--bg-color));
+      background-size: 400% 400%;
+      animation: moveGradient 25s ease infinite;
+    }
+
     @keyframes moveGradient {
         0% { background-position: 0% 50%; }
         50% { background-position: 100% 50%; }
         100% { background-position: 0% 50%; }
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      transition: background-color 0.3s, color 0.3s;
-      background: linear-gradient(-45deg, var(--accent-1), var(--accent-2), var(--accent-3), var(--bg-color));
-      background-size: 400% 400%;
-      animation: moveGradient 25s ease infinite;
     }
 
     /* Page Load Animation */
@@ -108,9 +105,9 @@
       background-color: var(--card-bg-color);
       border-radius: 20px;
       border: 1px solid var(--border-color);
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
       overflow: hidden;
       display: flex;
       flex-direction: column;
@@ -136,16 +133,16 @@
       justify-content: flex-start; /* Start from left */
       border-bottom: 1px solid var(--border-color);
       position: relative;
-      overflow-x: auto; /* Enable horizontal scrolling */
-      -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-      scrollbar-width: none; /* Hide scrollbar for Firefox */
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
     }
-    .tabs::-webkit-scrollbar { display: none; /* Hide scrollbar for Chrome/Safari */ }
+    .tabs::-webkit-scrollbar { display: none; }
     
     .tab-button {
-      flex-shrink: 0; /* Prevent buttons from shrinking */
-      padding: 16px 14px; background: none; border: none;
-      color: var(--muted-text-color); font-size: 0.9rem; font-weight: 500;
+      flex-shrink: 0;
+      padding: 16px 16px; background: none; border: none;
+      color: var(--muted-text-color); font-size: 0.95rem; font-weight: 500;
       cursor: pointer; transition: color 0.2s; white-space: nowrap;
       position: relative; z-index: 1;
     }
