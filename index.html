@@ -4,151 +4,392 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>True Random Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      transition: background 0.3s, color 0.3s;
+    /* CSS Variables for Theming */
+    :root {
+      --bg-color: #f4f7f9;
+      --card-bg-color: #ffffff;
+      --text-color: #111827;
+      --muted-text-color: #6b7280;
+      --border-color: #e5e7eb;
+      --accent-color: #3b82f6;
+      --accent-color-hover: #2563eb;
+      --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
     }
 
-    h1 {
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-color: #111827;
+        --card-bg-color: #1f2937;
+        --text-color: #f9fafb;
+        --muted-text-color: #9ca3af;
+        --border-color: #374151;
+        --accent-color: #60a5fa;
+        --accent-color-hover: #3b82f6;
+      }
+    }
+
+    /* Base Styles */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* Main App Container */
+    .app-container {
+      width: 100%;
+      max-width: 500px;
+      background-color: var(--card-bg-color);
+      border-radius: 16px;
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border-color);
       text-align: center;
     }
 
-    .container {
-      max-width: 400px;
-      margin: auto;
+    header h1 {
+      font-size: 1.5rem;
+      margin: 0;
+    }
+    
+    header p {
+        font-size: 0.9rem;
+        color: var(--muted-text-color);
+        margin: 4px 0 0;
     }
 
-    input, button {
+    main {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Tab Navigation */
+    .tabs {
+      display: flex;
+      justify-content: space-around;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .tab-button {
+      flex: 1;
+      padding: 16px;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      color: var(--muted-text-color);
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .tab-button:hover {
+      color: var(--accent-color);
+    }
+
+    .tab-button.active {
+      color: var(--text-color);
+      border-bottom-color: var(--accent-color);
+    }
+
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Form Elements */
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+    }
+
+    input[type="number"], input[type="text"] {
       display: block;
       width: 100%;
-      margin: 10px 0;
-      padding: 10px;
+      padding: 12px;
       border-radius: 8px;
-      border: 1px solid #ccc;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-color);
+      color: var(--text-color);
       font-size: 1rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
 
-    button {
-      background: #2563eb;
+    input[type="number"]:focus, input[type="text"]:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 20%, transparent);
+    }
+
+    .button-group {
+        display: flex;
+        gap: 12px;
+    }
+
+    .primary-button {
+      flex-grow: 1;
+      background: var(--accent-color);
       color: white;
       border: none;
-      cursor: pointer;
-      transition: transform 0.2s, background 0.2s;
-    }
-
-    button:hover {
-      background: #1d4ed8;
-      transform: scale(1.05);
-    }
-
-    pre {
-      background: #111827;
-      color: #f9fafb;
-      padding: 10px;
+      padding: 14px;
       border-radius: 8px;
-      white-space: pre-wrap;
-      word-wrap: break-word;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.2s;
     }
 
-    /* Dark mode (auto by system settings) */
-    @media (prefers-color-scheme: dark) {
-      body {
-        background: #111827;
-        color: #f9fafb;
-      }
+    .primary-button:hover {
+      background: var(--accent-color-hover);
+    }
 
-      input, button {
-        background: #1f2937;
-        color: white;
-        border: 1px solid #374151;
-      }
+    .primary-button:active {
+        transform: scale(0.98);
+    }
 
-      button {
-        background: #3b82f6;
-      }
+    .primary-button:disabled {
+        background-color: var(--muted-text-color);
+        cursor: not-allowed;
+    }
 
-      button:hover {
-        background: #2563eb;
-      }
+    /* Result Display */
+    .result-container {
+      background-color: var(--bg-color);
+      border-radius: 8px;
+      padding: 20px;
+      min-height: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      word-break: break-all;
+    }
+
+    .result-text {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--muted-text-color);
+    }
+
+    .result-text.loaded {
+        color: var(--text-color);
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🎲 True Random Generator</h1>
-    <p>Powered by RANDOM.ORG via Vercel API</p>
 
-    <!-- Generate Integer Section -->
-    <h3>Generate Integers</h3>
-    <input id="min" type="number" value="1" />
-    <input id="max" type="number" value="6" />
-    <input id="count" type="number" value="1" />
-    <button onclick="handleGenerate()">Generate</button>
-    <pre id="result"></pre>
+  <div class="app-container">
+    <header>
+      <h1>🎲 True Random Generator</h1>
+      <p>Powered by RANDOM.ORG</p>
+    </header>
+    
+    <nav class="tabs">
+      <button class="tab-button active" onclick="showTab('integers')">Integers</button>
+      <button class="tab-button" onclick="showTab('coin')">Coin Flip</button>
+      <button class="tab-button" onclick="showTab('list')">List Picker</button>
+    </nav>
 
-    <!-- Coin Flip -->
-    <h3>Flip a Coin</h3>
-    <button onclick="handleFlip(1)">Flip Once</button>
-    <button onclick="handleFlip(10)">Flip 10 Times</button>
-    <pre id="coinResult"></pre>
+    <main>
+      <!-- Generate Integer Section -->
+      <section id="integers" class="tab-content active">
+        <div class="form-group">
+            <label for="min">Minimum Value</label>
+            <input id="min" type="number" value="1" />
+        </div>
+        <div class="form-group">
+            <label for="max">Maximum Value</label>
+            <input id="max" type="number" value="100" />
+        </div>
+        <div class="form-group">
+            <label for="count">Number of Integers</label>
+            <input id="count" type="number" value="1" />
+        </div>
+        <button class="primary-button" onclick="handleGenerate(this)">Generate</button>
+        <div class="result-container" style="margin-top: 20px;">
+            <p id="result" class="result-text">Your random numbers will appear here.</p>
+        </div>
+      </section>
 
-    <!-- Pick From List -->
-    <h3>Pick From List</h3>
-    <input id="listItems" type="text" placeholder="apple, banana, cherry" />
-    <button onclick="handlePick()">Pick</button>
-    <pre id="pickResult"></pre>
+      <!-- Coin Flip Section -->
+      <section id="coin" class="tab-content">
+        <p style="text-align: center; color: var(--muted-text-color); margin-top:0;">Choose how many coins you want to flip.</p>
+        <div class="button-group">
+            <button class="primary-button" onclick="handleFlip(1, this)">Flip Once</button>
+            <button class="primary-button" onclick="handleFlip(10, this)">Flip 10 Times</button>
+        </div>
+         <div class="result-container" style="margin-top: 20px;">
+            <p id="coinResult" class="result-text">The coin flip result will appear here.</p>
+        </div>
+      </section>
+
+      <!-- Pick From List Section -->
+      <section id="list" class="tab-content">
+        <div class="form-group">
+            <label for="listItems">Enter items separated by a comma</label>
+            <input id="listItems" type="text" placeholder="apple, banana, cherry, orange" />
+        </div>
+        <button class="primary-button" onclick="handlePick(this)">Pick One Item</button>
+        <div class="result-container" style="margin-top: 20px;">
+            <p id="pickResult" class="result-text">The randomly picked item will appear here.</p>
+        </div>
+      </section>
+    </main>
   </div>
 
   <script>
-    // Call your own Vercel API instead of random.org directly
+    // --- ESSENTIAL API LOGIC (Unchanged) ---
     async function generateRandom(min, max, n = 1) {
       const response = await fetch(`/api/generateIntegers?min=${min}&max=${max}&n=${n}`);
+      if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'An unknown error occurred');
+      }
       const data = await response.json();
-
       if (data.error) {
         throw new Error(data.error);
       }
-
       return data.numbers;
     }
 
-    async function handleGenerate() {
+    // --- NEW FRONTEND & EVENT HANDLING LOGIC ---
+
+    // Tab switching function
+    function showTab(tabName) {
+      const contents = document.querySelectorAll('.tab-content');
+      const buttons = document.querySelectorAll('.tab-button');
+      
+      contents.forEach(content => {
+        content.classList.remove('active');
+      });
+      buttons.forEach(button => {
+        button.classList.remove('active');
+      });
+
+      document.getElementById(tabName).classList.add('active');
+      document.querySelector(`.tab-button[onclick="showTab('${tabName}')"]`).classList.add('active');
+    }
+
+    // Helper to manage UI state
+    function setLoading(button, resultEl, isLoading) {
+        button.disabled = isLoading;
+        button.textContent = isLoading ? 'Generating...' : button.dataset.originalText;
+        if (!isLoading) {
+            resultEl.classList.add('loaded');
+        } else {
+            resultEl.classList.remove('loaded');
+        }
+    }
+    
+    // --- MODIFIED HANDLERS ---
+
+    async function handleGenerate(button) {
       const min = document.getElementById("min").value;
       const max = document.getElementById("max").value;
       const count = document.getElementById("count").value;
       const resultEl = document.getElementById("result");
-
+      
+      button.dataset.originalText = 'Generate';
+      setLoading(button, resultEl, true);
+      
       try {
         const numbers = await generateRandom(min, max, count);
-        resultEl.textContent = "Result: " + numbers.join(", ");
+        resultEl.textContent = numbers.join(", ");
       } catch (err) {
         resultEl.textContent = "Error: " + err.message;
+      } finally {
+        setLoading(button, resultEl, false);
       }
     }
 
-    async function handleFlip(times) {
+    async function handleFlip(times, button) {
       const resultEl = document.getElementById("coinResult");
+      
+      button.dataset.originalText = button.textContent;
+      document.querySelectorAll('#coin .primary-button').forEach(b => b.disabled = true);
+      button.textContent = 'Flipping...';
+      resultEl.classList.remove('loaded');
 
       try {
         const results = await generateRandom(0, 1, times);
         const mapped = results.map(n => n === 0 ? "Heads" : "Tails");
-        resultEl.textContent = "Result: " + mapped.join(", ");
+        resultEl.textContent = mapped.join(", ");
       } catch (err) {
         resultEl.textContent = "Error: " + err.message;
+      } finally {
+        document.querySelectorAll('#coin .primary-button').forEach((b, index) => {
+            b.disabled = false;
+            b.textContent = index === 0 ? 'Flip Once' : 'Flip 10 Times';
+        });
+        resultEl.classList.add('loaded');
       }
     }
 
-    async function handlePick() {
-      const listEl = document.getElementById("listItems").value.split(",");
+    async function handlePick(button) {
+      const listValue = document.getElementById("listItems").value;
       const pickEl = document.getElementById("pickResult");
+      
+      button.dataset.originalText = 'Pick One Item';
+      setLoading(button, pickEl, true);
+      
+      if (!listValue.trim()) {
+          pickEl.textContent = "Error: Please enter a list of items.";
+          setLoading(button, pickEl, false);
+          return;
+      }
+      
+      const listEl = listValue.split(",").filter(item => item.trim() !== '');
 
       try {
-        const idx = await generateRandom(0, listEl.length - 1, 1);
-        pickEl.textContent = "Picked: " + listEl[idx[0]].trim();
+        const [idx] = await generateRandom(0, listEl.length - 1, 1);
+        pickEl.textContent = listEl[idx].trim();
       } catch (err) {
         pickEl.textContent = "Error: " + err.message;
+      } finally {
+        setLoading(button, pickEl, false);
       }
     }
   </script>
