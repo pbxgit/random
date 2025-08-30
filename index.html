@@ -52,13 +52,13 @@
     /* CSS Variables for Theming */
     :root {
       --bg-color: #11182a;
-      --card-bg-color: #1e293b;
+      --card-bg-color: rgba(30, 41, 59, 0.65);
       --text-color: #f8fafc;
       --muted-text-color: #94a3b8;
-      --border-color: #334155;
+      --border-color: rgba(55, 65, 81, 0.5);
       --input-bg-color: #0f172a;
-      --accent-1: #6366f1;
-      --accent-2: #8b5cf6;
+      --accent-1: #818cf8;
+      --accent-2: #c084fc;
       --accent-glow: 0 0 25px 0 color-mix(in srgb, var(--accent-1) 30%, transparent);
       --die-bg: #475569;
       --die-pip: #f8fafc;
@@ -82,8 +82,8 @@
       display: grid;
       place-items: center;
       padding: 20px;
-      background-image: radial-gradient(circle at 10% 15%, var(--accent-1), var(--bg-color) 40%),
-                        radial-gradient(circle at 85% 80%, var(--accent-2), var(--bg-color) 40%);
+      /* Subtle noise texture */
+      background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80"%3E%3Crect fill="%2311182a" width="80" height="80"%3E%3C/rect%3E%3Cg fill-opacity="0.1"%3E%3Ccircle fill="%23ffffff" cx="40" cy="40" r="60"/%3E%3Ccircle fill="%23eeeeee" cx="40" cy="40" r="50"/%3E%3Ccircle fill="%23dddddd" cx="40" cy="40" r="40"/%3E%3Ccircle fill="%23cccccc" cx="40" cy="40" r="30"/%3E%3Ccircle fill="%23bbbbbb" cx="40" cy="40" r="20"/%3E%3Ccircle fill="%23aaaaaa" cx="40" cy="40" r="10"/%3E%3C/g%3E%3C/svg%3E');
     }
 
     /* Page Load Animation */
@@ -103,27 +103,48 @@
       display: flex;
       flex-direction: column;
       animation: fadeInUp 0.6s ease-out;
+      position: relative; /* For the gradient border */
+    }
+
+    /* Glowing Gradient Border */
+    .app-container::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      border-radius: 24px;
+      padding: 1px;
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+      -webkit-mask: 
+         linear-gradient(#fff 0 0) content-box, 
+         linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      z-index: -1;
     }
 
     header { 
       padding: 24px;
       border-bottom: 1px solid var(--border-color);
-      text-align: center;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 16px;
     }
     header h1 {
       font-family: 'Playfair Display', serif;
-      font-size: 2.25rem;
-      margin: 0 0 4px 0;
-      line-height: 1.2;
+      font-size: 2rem;
+      margin: 0;
+      line-height: 1;
     }
     header p {
       font-family: 'Poppins', sans-serif;
-      font-size: 0.85rem;
-      color: var(--muted-text-color);
+      font-size: 1rem;
       margin: 0;
-      line-height: 1;
-      font-weight: 400;
+      line-height: 1.3;
+      font-weight: 600;
     }
+    header span { font-size: 0.8rem; color: var(--muted-text-color); font-weight: 400; }
 
     main { padding: 24px; display: flex; flex-direction: column; gap: 20px; }
 
@@ -167,6 +188,10 @@
     .form-group-inline { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
     .form-group-inline label { margin-bottom: 0; font-weight: 400; }
     .form-group-inline input[type="checkbox"] { width: 16px; height: 16px; }
+    .form-group-inline input[type="checkbox"]:disabled + label {
+        color: var(--muted-text-color);
+        cursor: not-allowed;
+    }
     
     .compact-inputs { display: flex; gap: 12px; margin-bottom: 16px; }
     .compact-inputs .form-group { flex: 1; margin-bottom: 0; min-width: 80px; }
@@ -316,7 +341,6 @@
       <button class="tab-button" onclick="showTab('dice', this)">Dice Roller</button>
       <button class="tab-button" onclick="showTab('list', this)">List Picker</button>
       <button class="tab-button" onclick="showTab('shuffle', this)">List Shuffler</button>
-      <button class="tab-button" onclick="showTab('alphabetizer', this)">Alphabetizer</button>
       <div class="tab-underline"></div>
     </nav>
 
@@ -409,18 +433,6 @@
               <button class="copy-btn" title="Copy to clipboard" onclick="handleCopy('shuffleResult')"><svg fill="currentColor" viewBox="0 0 16 16"><path d="M13 4.5a.5.5 0 0 0-.5-.5H5.707l.647-.646a.5.5 0 1 0-.708-.708l-1.5 1.5a.5.5 0 0 0 0 .708l1.5 1.5a.5.5 0 0 0 .708-.708L5.707 5H12.5a.5.5 0 0 0 .5-.5z"/><path d="M4 2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V2zm2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H6zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H2z"/></svg></button>
           </div>
       </section>
-
-      <section id="alphabetizer" class="tab-content">
-          <div class="form-group">
-              <label for="alphabetizeList">Enter items, one per line</label>
-              <textarea id="alphabetizeList" placeholder="Orange&#10;Apple&#10;Cherry&#10;Banana"></textarea>
-          </div>
-          <button class="primary-button" onclick="handleAlphabetize(this)">Sort A-Z</button>
-          <div class="result-container" style="margin-top: 20px;">
-              <p id="alphabetizeResult" class="result-text">Your sorted list will appear here.</p>
-              <button class="copy-btn" title="Copy to clipboard" onclick="handleCopy('alphabetizeResult')"><svg fill="currentColor" viewBox="0 0 16 16"><path d="M13 4.5a.5.5 0 0 0-.5-.5H5.707l.647-.646a.5.5 0 1 0-.708-.708l-1.5 1.5a.5.5 0 0 0 0 .708l1.5 1.5a.5.5 0 0 0 .708-.708L5.707 5H12.5a.5.5 0 0 0 .5-.5z"/><path d="M4 2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V2zm2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H6zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H2z"/></svg></button>
-          </div>
-      </section>
     </main>
   </div>
 
@@ -457,22 +469,18 @@
         const maxInput = document.getElementById('max');
         const countInput = document.getElementById('count');
         const duplicatesCheckbox = document.getElementById('allowDuplicates');
-        const duplicatesLabel = duplicatesCheckbox.nextElementSibling;
 
         function validateUniqueOption() {
             const min = parseInt(minInput.value) || 0;
             const max = parseInt(maxInput.value) || 0;
             const count = parseInt(countInput.value) || 0;
             const range = max - min + 1;
-            if (count > range && range > 0) {
+
+            if ((count > range && range > 0) || count <= 1) {
                 duplicatesCheckbox.checked = true;
                 duplicatesCheckbox.disabled = true;
-                duplicatesLabel.style.color = 'var(--muted-text-color)';
-                duplicatesLabel.title = `Cannot generate ${count} unique numbers from a range of only ${range}. Duplicates must be allowed.`;
             } else {
                 duplicatesCheckbox.disabled = false;
-                duplicatesLabel.style.color = '';
-                duplicatesLabel.title = '';
             }
         }
         minInput.addEventListener('input', validateUniqueOption);
@@ -505,10 +513,7 @@
 
     function setLoading(button, resultEl, isLoading, originalText) {
       button.disabled = isLoading;
-      button.textContent = isLoading ? 'Sorting...' : originalText;
-      if (originalText !== 'Sort A-Z') {
-        button.textContent = isLoading ? 'Generating...' : originalText;
-      }
+      button.textContent = isLoading ? 'Generating...' : originalText;
       const resultContainer = resultEl.closest('.result-container');
       if (resultContainer) {
           resultContainer.classList.remove('has-result');
@@ -731,26 +736,6 @@
             resultEl.textContent = "Error: " + err.message;
         } finally {
             setLoading(button, resultEl, false, 'Shuffle List');
-        }
-    }
-
-    function handleAlphabetize(button) {
-        const resultEl = document.getElementById("alphabetizeResult");
-        setLoading(button, resultEl, true, 'Sort A-Z');
-        try {
-            const listValue = document.getElementById("alphabetizeList").value;
-            if (!listValue.trim()) throw new Error("Please enter a list of items.");
-            let items = listValue.split('\n').filter(item => item.trim() !== '');
-            if (items.length === 0) throw new Error("The list is empty.");
-            
-            // Sort using localeCompare for proper, case-insensitive sorting
-            items.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
-
-            resultEl.textContent = items.join('\n');
-        } catch (err) {
-            resultEl.textContent = "Error: " + err.message;
-        } finally {
-            setLoading(button, resultEl, false, 'Sort A-Z');
         }
     }
 
