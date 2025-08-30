@@ -1,248 +1,156 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>True Random Generator</title>
-
   <style>
-    /* ----------------- Base Styles ----------------- */
-    :root {
-      --bg-light: #f7fafc;
-      --bg-dark: #111827;
-      --card-light: #ffffff;
-      --card-dark: #1f2937;
-      --text-light: #111827;
-      --text-dark: #f3f4f6;
-      --primary: #2563eb;
-      --primary-hover: #1d4ed8;
-      --radius: 14px;
-      --shadow: 0 6px 18px rgba(0,0,0,0.1);
-    }
-
     body {
-      margin: 0;
-      font-family: system-ui, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      background: var(--bg-light);
-      color: var(--text-light);
+      font-family: Arial, sans-serif;
+      padding: 20px;
       transition: background 0.3s, color 0.3s;
     }
 
-    @media (prefers-color-scheme: dark) {
-      body {
-        background: var(--bg-dark);
-        color: var(--text-dark);
-      }
-      .card {
-        background: var(--card-dark);
-      }
-      pre {
-        background: #0f172a;
-      }
+    h1 {
+      text-align: center;
     }
 
-    /* ----------------- Card Layout ----------------- */
-    .card {
-      background: var(--card-light);
-      border-radius: var(--radius);
-      padding: 24px;
-      box-shadow: var(--shadow);
-      width: 92%;
-      max-width: 650px;
-      animation: fadeIn 0.6s ease;
-    }
-
-    h1 { margin-top: 0; text-align: center; }
-    h3 { margin-bottom: 6px; }
-
-    .section {
-      margin: 20px 0;
-      animation: fadeUp 0.6s ease;
-    }
-
-    /* ----------------- Controls ----------------- */
-    .row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 8px;
+    .container {
+      max-width: 400px;
+      margin: auto;
     }
 
     input, button {
-      flex: 1;
+      display: block;
+      width: 100%;
+      margin: 10px 0;
       padding: 10px;
       border-radius: 8px;
       border: 1px solid #ccc;
-      font-size: 15px;
-      transition: transform 0.2s, background 0.2s, color 0.2s;
+      font-size: 1rem;
     }
 
     button {
-      cursor: pointer;
-      background: var(--primary);
+      background: #2563eb;
       color: white;
       border: none;
-      flex: unset;
-      min-width: 110px;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
     }
+
     button:hover {
-      background: var(--primary-hover);
+      background: #1d4ed8;
       transform: scale(1.05);
     }
 
     pre {
       background: #111827;
-      color: #fff;
-      padding: 12px;
+      color: #f9fafb;
+      padding: 10px;
       border-radius: 8px;
-      margin-top: 10px;
-      font-size: 14px;
-      min-height: 30px;
       white-space: pre-wrap;
       word-wrap: break-word;
-      transition: background 0.3s, color 0.3s;
     }
 
-    /* ----------------- Animations ----------------- */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.96); }
-      to   { opacity: 1; transform: scale(1); }
-    }
+    /* Dark mode (auto by system settings) */
+    @media (prefers-color-scheme: dark) {
+      body {
+        background: #111827;
+        color: #f9fafb;
+      }
 
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(12px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+      input, button {
+        background: #1f2937;
+        color: white;
+        border: 1px solid #374151;
+      }
 
-    .result-animate {
-      animation: pop 0.4s ease;
-    }
-    @keyframes pop {
-      0% { transform: scale(0.8); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
+      button {
+        background: #3b82f6;
+      }
 
-    /* Coin flip animation */
-    .coin {
-      display: inline-block;
-      perspective: 1000px;
-    }
-    .coin-inner {
-      display: inline-block;
-      animation: flip 1s ease forwards;
-    }
-    @keyframes flip {
-      0% { transform: rotateY(0); }
-      100% { transform: rotateY(720deg); }
+      button:hover {
+        background: #2563eb;
+      }
     }
   </style>
 </head>
 <body>
-  <main class="card">
+  <div class="container">
     <h1>🎲 True Random Generator</h1>
-    <p style="text-align:center;font-size:14px;opacity:0.7">Powered by RANDOM.ORG </p>
+    <p>Powered by RANDOM.ORG via Vercel API</p>
 
-    <div class="section">
-      <h3>Generate Integers</h3>
-      <div class="row">
-        <input id="min" type="number" value="1" />
-        <input id="max" type="number" value="6" />
-        <input id="count" type="number" value="1" />
-        <button id="genBtn">Generate</button>
-      </div>
-      <pre id="outInt">—</pre>
-    </div>
+    <!-- Generate Integer Section -->
+    <h3>Generate Integers</h3>
+    <input id="min" type="number" value="1" />
+    <input id="max" type="number" value="6" />
+    <input id="count" type="number" value="1" />
+    <button onclick="handleGenerate()">Generate</button>
+    <pre id="result"></pre>
 
-    <div class="section">
-      <h3>Flip a Coin</h3>
-      <div class="row">
-        <button id="flipBtn">Flip Once</button>
-        <button id="flip10">Flip 10 Times</button>
-      </div>
-      <pre id="outCoin">—</pre>
-    </div>
+    <!-- Coin Flip -->
+    <h3>Flip a Coin</h3>
+    <button onclick="handleFlip(1)">Flip Once</button>
+    <button onclick="handleFlip(10)">Flip 10 Times</button>
+    <pre id="coinResult"></pre>
 
-    <div class="section">
-      <h3>Pick From List</h3>
-      <div class="row">
-        <input id="list" placeholder="apple, banana, cherry" />
-        <button id="pickBtn">Pick</button>
-      </div>
-      <pre id="outPick">—</pre>
-    </div>
-  </main>
+    <!-- Pick From List -->
+    <h3>Pick From List</h3>
+    <input id="listItems" type="text" placeholder="apple, banana, cherry" />
+    <button onclick="handlePick()">Pick</button>
+    <pre id="pickResult"></pre>
+  </div>
 
-<script>
-async function postJson(path, body){
-  const res = await fetch(path, {
-    method: 'POST',
-    headers: { 'content-type':'application/json' },
-    body: JSON.stringify(body)
-  });
-  return res.json();
-}
+  <script>
+    // Call your own Vercel API instead of random.org directly
+    async function generateRandom(min, max, n = 1) {
+      const response = await fetch(`/api/generateIntegers?min=${min}&max=${max}&n=${n}`);
+      const data = await response.json();
 
-// Helper: animate output
-function showResult(id, text, coin=false) {
-  const el = document.getElementById(id);
-  el.classList.remove('result-animate');
-  void el.offsetWidth; // restart animation
-  el.classList.add('result-animate');
-  el.innerHTML = coin ? `<span class="coin"><span class="coin-inner">${text}</span></span>` : text;
-}
+      if (data.error) {
+        throw new Error(data.error);
+      }
 
-// Generate integers
-document.getElementById('genBtn').onclick = async () => {
-  const min = +document.getElementById('min').value;
-  const max = +document.getElementById('max').value;
-  const n   = +document.getElementById('count').value;
-  showResult('outInt',"⏳ Generating...");
-  try {
-    const r = await postJson('/api/generateIntegers',{n,min,max,replacement:true});
-    showResult('outInt', JSON.stringify(r.random.data, null, 2));
-  } catch(e) {
-    showResult('outInt',"Error: "+e.message);
-  }
-};
+      return data.numbers;
+    }
 
-// Flip coins
-async function flip(n=1){
-  showResult('outCoin',"⏳ Flipping...");
-  try {
-    const r = await postJson('/api/generateIntegers',{n,min:0,max:1,replacement:true});
-    const results = r.random.data.map(x => x===1 ? "Heads" : "Tails");
-    showResult('outCoin', results.join(', '), true);
-  } catch(e) {
-    showResult('outCoin',"Error: "+e.message);
-  }
-}
-document.getElementById('flipBtn').onclick = () => flip(1);
-document.getElementById('flip10').onclick = () => flip(10);
+    async function handleGenerate() {
+      const min = document.getElementById("min").value;
+      const max = document.getElementById("max").value;
+      const count = document.getElementById("count").value;
+      const resultEl = document.getElementById("result");
 
-// Pick from list
-document.getElementById('pickBtn').onclick = async () => {
-  const items = document.getElementById('list').value.split(',').map(s=>s.trim()).filter(Boolean);
-  if(items.length===0){ showResult('outPick',"Enter at least one item"); return; }
-  try {
-    const r = await postJson('/api/generateIntegers',{n:1,min:0,max:items.length-1,replacement:false});
-    showResult('outPick', items[r.random.data[0]]);
-  } catch(e) {
-    showResult('outPick',"Error: "+e.message);
-  }
-};
-</script>
-</body>
-</html><!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Page title</title>
-</head>
-<body>
-    
+      try {
+        const numbers = await generateRandom(min, max, count);
+        resultEl.textContent = "Result: " + numbers.join(", ");
+      } catch (err) {
+        resultEl.textContent = "Error: " + err.message;
+      }
+    }
+
+    async function handleFlip(times) {
+      const resultEl = document.getElementById("coinResult");
+
+      try {
+        const results = await generateRandom(0, 1, times);
+        const mapped = results.map(n => n === 0 ? "Heads" : "Tails");
+        resultEl.textContent = "Result: " + mapped.join(", ");
+      } catch (err) {
+        resultEl.textContent = "Error: " + err.message;
+      }
+    }
+
+    async function handlePick() {
+      const listEl = document.getElementById("listItems").value.split(",");
+      const pickEl = document.getElementById("pickResult");
+
+      try {
+        const idx = await generateRandom(0, listEl.length - 1, 1);
+        pickEl.textContent = "Picked: " + listEl[idx[0]].trim();
+      } catch (err) {
+        pickEl.textContent = "Error: " + err.message;
+      }
+    }
+  </script>
 </body>
 </html>
