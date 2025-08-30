@@ -1,5 +1,15 @@
+// api/generateIntegers.js
 export default async function handler(req, res) {
   try {
+    const { min = 1, max = 6, n = 1 } = req.query;
+
+    // Use your RANDOM.ORG API key stored in environment variables
+    const apiKey = process.env.RANDOM_ORG_API_KEY;
+
+    if (!apiKey) {
+      return res.status(500).json({ error: "Missing RANDOM_ORG_API_KEY in Vercel environment." });
+    }
+
     const response = await fetch("https://api.random.org/json-rpc/4/invoke", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -7,13 +17,13 @@ export default async function handler(req, res) {
         jsonrpc: "2.0",
         method: "generateIntegers",
         params: {
-          apiKey: process.env.RANDOM_API_KEY, // from Vercel env vars
-          n: 1, // how many numbers
-          min: 0,
-          max: 1, // change max for larger ranges
+          apiKey: apiKey,
+          n: parseInt(n),
+          min: parseInt(min),
+          max: parseInt(max),
           replacement: true
         },
-        id: 1
+        id: 42
       })
     });
 
@@ -23,10 +33,8 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: data.error.message });
     }
 
-    const randomNumber = data.result.random.data[0];
-    res.status(200).json({ number: randomNumber });
-
+    return res.status(200).json({ numbers: data.result.random.data });
   } catch (err) {
-    res.status(500).json({ error: "Something went wrong", details: err.message });
+    return res.status(500).json({ error: err.message });
   }
 }
