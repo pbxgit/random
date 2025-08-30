@@ -108,25 +108,22 @@
     header { 
       padding: 24px;
       border-bottom: 1px solid var(--border-color);
-      text-align: left;
-      display: flex;
-      align-items: center;
-      gap: 16px;
+      text-align: center;
     }
     header h1 {
       font-family: 'Playfair Display', serif;
-      font-size: 2rem;
-      margin: 0;
-      line-height: 1;
+      font-size: 2.25rem;
+      margin: 0 0 4px 0;
+      line-height: 1.2;
     }
     header p {
       font-family: 'Poppins', sans-serif;
-      font-size: 1rem;
+      font-size: 0.85rem;
+      color: var(--muted-text-color);
       margin: 0;
-      line-height: 1.3;
-      font-weight: 600;
+      line-height: 1;
+      font-weight: 400;
     }
-    header span { font-size: 0.8rem; color: var(--muted-text-color); font-weight: 400; }
 
     main { padding: 24px; display: flex; flex-direction: column; gap: 20px; }
 
@@ -170,6 +167,10 @@
     .form-group-inline { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
     .form-group-inline label { margin-bottom: 0; font-weight: 400; }
     .form-group-inline input[type="checkbox"] { width: 16px; height: 16px; }
+    .form-group-inline input[type="checkbox"]:disabled + label {
+        color: var(--muted-text-color);
+        cursor: not-allowed;
+    }
     
     .compact-inputs { display: flex; gap: 12px; margin-bottom: 16px; }
     .compact-inputs .form-group { flex: 1; margin-bottom: 0; min-width: 80px; }
@@ -224,14 +225,13 @@
     .result-container.has-result .copy-btn { display: flex; }
     .copy-btn svg { width: 16px; height: 16px; }
 
-    /* --- ENHANCED COIN VISUALS --- */
+    /* Coin Visuals */
     .coin-container { display: flex; justify-content: center; margin-bottom: 24px; perspective: 1000px; }
     .coin { 
         width: 100px; 
         height: 100px; 
         position: relative; 
         transform-style: preserve-3d;
-        /* The transition is key for the new animation */
         transition: transform 2.5s cubic-bezier(0.25, 1, 0.5, 1);
     }
     .coin-face {
@@ -309,8 +309,8 @@
 
   <div class="app-container">
     <header>
-      <h1>🎲</h1>
-      <p>PB True Random Toolkit<br><span>Powered by <a href="https://www.random.org/randomness/" target="_blank" rel="noopener noreferrer" class="link-style">RANDOM.ORG</a></span></p>
+      <h1>PB True Random Toolkit</h1>
+      <p>Powered by <a href="https://www.random.org/randomness/" target="_blank" rel="noopener noreferrer" class="link-style">RANDOM.ORG</a></p>
     </header>
     
     <nav class="tabs">
@@ -320,11 +320,10 @@
       <button class="tab-button" onclick="showTab('dice', this)">Dice Roller</button>
       <button class="tab-button" onclick="showTab('list', this)">List Picker</button>
       <button class="tab-button" onclick="showTab('shuffle', this)">List Shuffler</button>
-      <div class="tab-underline"></div>
+      <button class="tab-button" onclick="showTab('alphabetizer', this)">Alphabetizer</button>
     </nav>
 
     <main>
-      <!-- All section HTML is present and correct -->
       <section id="integers" class="tab-content active">
         <div class="compact-inputs">
             <div class="form-group"><label for="min">Minimum</label><input id="min" type="number" value="1" /></div>
@@ -413,11 +412,23 @@
               <button class="copy-btn" title="Copy to clipboard" onclick="handleCopy('shuffleResult')"><svg fill="currentColor" viewBox="0 0 16 16"><path d="M13 4.5a.5.5 0 0 0-.5-.5H5.707l.647-.646a.5.5 0 1 0-.708-.708l-1.5 1.5a.5.5 0 0 0 0 .708l1.5 1.5a.5.5 0 0 0 .708-.708L5.707 5H12.5a.5.5 0 0 0 .5-.5z"/><path d="M4 2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V2zm2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H6zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H2z"/></svg></button>
           </div>
       </section>
+
+      <section id="alphabetizer" class="tab-content">
+          <div class="form-group">
+              <label for="alphabetizeList">Enter items, one per line</label>
+              <textarea id="alphabetizeList" placeholder="Orange&#10;Apple&#10;Cherry&#10;Banana"></textarea>
+          </div>
+          <button class="primary-button" onclick="handleAlphabetize(this)">Sort A-Z</button>
+          <div class="result-container" style="margin-top: 20px;">
+              <p id="alphabetizeResult" class="result-text">Your sorted list will appear here.</p>
+              <button class="copy-btn" title="Copy to clipboard" onclick="handleCopy('alphabetizeResult')"><svg fill="currentColor" viewBox="0 0 16 16"><path d="M13 4.5a.5.5 0 0 0-.5-.5H5.707l.647-.646a.5.5 0 1 0-.708-.708l-1.5 1.5a.5.5 0 0 0 0 .708l1.5 1.5a.5.5 0 0 0 .708-.708L5.707 5H12.5a.5.5 0 0 0 .5-.5z"/><path d="M4 2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V2zm2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H6zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H2z"/></svg></button>
+          </div>
+      </section>
     </main>
   </div>
 
   <script>
-    let currentCoinRotation = 0; // Keep track of coin rotation
+    let currentCoinRotation = 0;
     
     // --- API LOGIC ---
     async function generateRandom(params) {
@@ -449,22 +460,18 @@
         const maxInput = document.getElementById('max');
         const countInput = document.getElementById('count');
         const duplicatesCheckbox = document.getElementById('allowDuplicates');
-        const duplicatesLabel = duplicatesCheckbox.nextElementSibling;
 
         function validateUniqueOption() {
             const min = parseInt(minInput.value) || 0;
             const max = parseInt(maxInput.value) || 0;
             const count = parseInt(countInput.value) || 0;
             const range = max - min + 1;
-            if (count > range && range > 0) {
+
+            if ((count > range && range > 0) || count <= 1) {
                 duplicatesCheckbox.checked = true;
                 duplicatesCheckbox.disabled = true;
-                duplicatesLabel.style.color = 'var(--muted-text-color)';
-                duplicatesLabel.title = `Cannot generate ${count} unique numbers from a range of only ${range}. Duplicates must be allowed.`;
             } else {
                 duplicatesCheckbox.disabled = false;
-                duplicatesLabel.style.color = '';
-                duplicatesLabel.title = '';
             }
         }
         minInput.addEventListener('input', validateUniqueOption);
@@ -497,7 +504,10 @@
 
     function setLoading(button, resultEl, isLoading, originalText) {
       button.disabled = isLoading;
-      button.textContent = isLoading ? 'Generating...' : originalText;
+      button.textContent = isLoading ? 'Processing...' : originalText;
+      if (originalText.includes('Generate')) {
+        button.textContent = isLoading ? 'Generating...' : originalText;
+      }
       const resultContainer = resultEl.closest('.result-container');
       if (resultContainer) {
           resultContainer.classList.remove('has-result');
@@ -623,41 +633,37 @@
         
         const flipPromise = generateRandom({min: 0, max: 1, n: times, replacement: true});
 
-        currentCoinRotation += 5 * 360; // Add 5 spins
+        currentCoinRotation += 7 * 360;
         coinEl.style.transform = `rotateY(${currentCoinRotation}deg)`;
 
         try {
-            const [results] = await Promise.all([flipPromise, new Promise(res => setTimeout(res, 500))]); // Ensure minimum spin time
+            const [results] = await Promise.all([flipPromise, new Promise(res => setTimeout(res, 500))]);
             const mapped = results.map(n => n === 0 ? "Heads" : "Tails");
 
             if (times === 1) {
                 resultEl.textContent = mapped[0];
-                const finalSide = results[0]; // 0 for Heads, 1 for Tails
+                const finalSide = results[0];
                 
-                // Calculate the final resting angle
-                const revolutions = Math.ceil(currentCoinRotation / 360);
-                let finalRotation = revolutions * 360;
-                if (finalSide === 1) { // If tails
-                    finalRotation += 180;
-                }
+                const revolutions = Math.floor(currentCoinRotation / 360);
+                let finalRotation = (revolutions + 1) * 360;
+                if (finalSide === 1) { finalRotation += 180; }
 
                 currentCoinRotation = finalRotation;
                 coinEl.style.transform = `rotateY(${currentCoinRotation}deg)`;
 
             } else {
-                resultEl.textContent = mapped.join(", ");
+                setTimeout(() => { resultEl.textContent = mapped.join(", "); }, 1000);
             }
         } catch (err) {
             resultEl.textContent = "Error: " + err.message;
         } finally {
-            // Re-enable buttons after the transition ends
             setTimeout(() => {
                 setLoading(button, resultEl, false, '');
                 allButtons.forEach((b, i) => {
                     b.disabled = false;
                     b.textContent = i === 0 ? 'Flip Once' : 'Flip 10 Times';
                 });
-            }, 2500); // Must match CSS transition duration
+            }, 2500);
         }
     }
 
@@ -724,6 +730,25 @@
             resultEl.textContent = "Error: " + err.message;
         } finally {
             setLoading(button, resultEl, false, 'Shuffle List');
+        }
+    }
+
+    function handleAlphabetize(button) {
+        const resultEl = document.getElementById("alphabetizeResult");
+        setLoading(button, resultEl, true, 'Sort A-Z');
+        try {
+            const listValue = document.getElementById("alphabetizeList").value;
+            if (!listValue.trim()) throw new Error("Please enter a list of items.");
+            let items = listValue.split('\n').filter(item => item.trim() !== '');
+            if (items.length === 0) throw new Error("The list is empty.");
+            
+            items.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+
+            resultEl.textContent = items.join('\n');
+        } catch (err) {
+            resultEl.textContent = "Error: " + err.message;
+        } finally {
+            setLoading(button, resultEl, false, 'Sort A-Z');
         }
     }
 
