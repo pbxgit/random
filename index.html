@@ -456,11 +456,19 @@
             const max = parseInt(maxInput.value) || 0;
             const count = parseInt(countInput.value) || 0;
             const range = max - min + 1;
-            if (count > range && range > 0) {
+
+            const mustAllowDuplicates = count > range && range > 0;
+            const isSingleCount = count === 1;
+
+            if (mustAllowDuplicates) {
                 duplicatesCheckbox.checked = true;
                 duplicatesCheckbox.disabled = true;
                 duplicatesLabel.style.color = 'var(--muted-text-color)';
                 duplicatesLabel.title = `Cannot generate ${count} unique numbers from a range of only ${range}. Duplicates must be allowed.`;
+            } else if (isSingleCount) {
+                duplicatesCheckbox.disabled = true;
+                duplicatesLabel.style.color = 'var(--muted-text-color)';
+                duplicatesLabel.title = 'Duplicates option does not apply when generating a single number.';
             } else {
                 duplicatesCheckbox.disabled = false;
                 duplicatesLabel.style.color = '';
